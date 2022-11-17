@@ -316,7 +316,7 @@ $$ tanh(v) = 2 \cdot sigmoid(2v) - 1 $$
 
 - ReLU(Retified Linear Unit, 정류(개선) 선형 단위)
 
-$$ \phi(v) = max\lbracev, 0\rbrace $$
+$$ \phi(v) = max \lbrace v, 0\rbrace $$
 
 - hardtanh(엄격한 쌍곡탄젠트)
 
