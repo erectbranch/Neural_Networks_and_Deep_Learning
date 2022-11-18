@@ -70,6 +70,8 @@ $$ \hat{y} = sgn\lbrace\bar{W} \cdot \bar{X} \rbrace = sgn\lbrace\sum_{j=1}^d w_
 
 이를테면 **SVM**(Support Vector Machine, 지지 벡터 기계), **logistic regression classifier**(로지스틱 회귀 분류기),**least-squares regression with numeric targets**(수치 목푯값 최소제곱 회귀)를 흉내 내는 것이 가능하다.
 
+> [logistic regression의 사용 이유](https://icim.nims.re.kr/post/easyMath/64)
+
 ### 신경망의 깊이
 
 퍼셉트론이 두 개의 층으로 이루어지지만, 입력층은 그 어떤 계산도 수행하지 않고 그냥 특정 값들을 전달하기만 했다. 따라서 신경망의 depth(깊이)를 셀 때는 입력층을 포함하지 않는다. 퍼셉트론은 **계산층**(computational layer)이 단 하나이므로 단층 신경망에 해당한다.
@@ -139,6 +141,47 @@ $$ \hat{y} = sgn\lbrace\bar{W} \cdot \bar{X} \rbrace = sgn\lbrace\sum_{j=1}^d w_
 > 목적함수를 최대화 혹은 최소화하는 인수를 구하는 문제를 **최적화 문제**(optimization problem)이라고 한다.
 
 > 가령 '장바구니 안에 크기와 중량을 고려해서 물건 총액이 최대가 되도록 담겠다'라는 문제가 있다면, 목적함수는 '담은 물건의 총액'을 나타내게 된다.
+
+---
+
+### <span style='background-color: #393E46; color: #F7F7F7'>&nbsp;&nbsp;&nbsp;📝 예제: 행렬곱&nbsp;&nbsp;&nbsp;</span>
+
+실제로 신경망에서 함수가 행렬곱으로 처리되는 과정을 이해하기 위해 다음 예시를 살펴보자. 입력 layer가 하나, 출력 노드가 두 개인 신경망이며, activation function으로 각기 다른 class(개/고양이)에 해당할 확률을 알기 위해 softmax를 적용했다.
+
+> [행렬곱으로 이해하는 신경망](https://wikidocs.net/150781)
+
+![행렬곱 예시 1](images/matrix_ex_1.png)
+
+tensorflow로 처음 모델을 만들어 볼 때 Sequential Model로 다음과 같이 구성했었다.
+
+```Python
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+
+model = Sequential()
+
+# 3개의 입력과 2개의 출력
+model.add(Dense(2, input_dim=3, activation='softmax'))
+```
+
+위 신경망에서 일어나는 연산을 행렬곱으로 나타내면 다음과 같다. 우선 활성화 전 값을 구해 보자.
+
+$$ \begin{bmatrix} x_1 \, x_2 \, x_3 \end{bmatrix} \cdot \begin{bmatrix} w_1 \, \, w_4 \\ w_2 \, \, w_5 \\ w_3 \, \, w_6 \end{bmatrix} + \begin{bmatrix} b_1, b_2 \end{bmatrix} = \begin{bmatrix} y_1 \, \, y_2 \end{bmatrix} $$
+
+- $ \begin{bmatrix} w_1 \, w_2 \, w_3 \end{bmatrix} $ : $y_1$ node로 향하는 edge들의 weight들
+
+- $ \begin{bmatrix} w_4 \, w_5 \, w_6 \end{bmatrix} $ : $y_2$ node로 향하는 edge들의 weight들
+
+- $ \begin{bmatrix} b_1 \, b_2 \end{bmatrix} $ : bias
+
+이를 계산하는 과정을 수식으로 쓰면 다음과 같다.
+
+$$ h_1 = x_1 w_1 + x_2 w_2 + x_3 w_3 + b_1 $$
+$$ h_2 = x_1 w_4 + x_2 w_5 + x_3 w_6 + b_2 $$
+
+그리고 activation function을 적용하면 output을 도출할 수 있다.
+
+$$ [y_1, y_2] = softmax([h_1, h_2]) $$
 
 ---
 
@@ -259,9 +302,9 @@ $$ \overline{W} \Leftarrow \overline{W} + \alpha \sum_{(\overline{X}, y) \in S^{
 
 앞선 예시들은 퍼셉트론으로 binary class label을 예측하는 경우였다. 따라서 sign function을 activation function으로 사용했지만, 다른 종류의 target을 예측해야 한다면 상황이 다르다.
 
-- 예를 들어 target이 연속적인 실수라면 identity function(항등함수)을 activation function으로 사용하는 것이 합당하다. 이 경우 최소제곱 회귀와 학습 알고리즘이 같아진다.
+- 예를 들어 <U>target이 연속적인 실수</U>라면 identity function(항등함수)을 activation function으로 사용하는 것이 합당하다. 이 경우 최소제곱 회귀와 학습 알고리즘이 같아진다.
 
-- 다른 예시로, 만일 어떤 binary class의 확률을 예측해야 한다면, sigmoid로 출력 노드를 활성화하는 것이 합당하다. 이 경우 예측값 $ \hat{y} $ 는 종속변수의 관측값 y가 1일 확률을 나타낸다. 
+- 다른 예시로, 만일 어떤 binary-classification, 즉 <U>binary class의 **확률**을 예측</U>(T/F, 1/0 일 확률 등)해야 한다면, sigmoid로 출력 노드를 활성화하는 것이 합당하다. 이 경우 예측값 $ \hat{y} $ 는 종속변수의 관측값 y가 1일 확률을 나타낸다. 
 
   - 그리고 손실함수로는, y가 가질 수 있는 값이 $ \lbrace -1, 1 \rbrace $ 이라는 가정 하에, $ | { y / 2 - 0.5 + \hat{y} } | $ 의 음의 로그를 사용한다.
 
@@ -336,7 +379,7 @@ $$ \phi(v) = max\lbrace min[v,1], -1 \rbrace $$
 
 출력 노드의 종류와 수 역시 activation function과 밀접한 연관이 있다. 일단 activation function 자체는 주어진 과제의 성격에 따라 정했다.
 
-예를 들어 k중 classification(분류) 과제라면 주어진 한 층에서 $ \bar{v} = [v_1, ..., v_k] $ 를 출력하는 softmax activation function을 이용해서 k개의 값을 출력할 수 있다.
+예를 들어 <U>k중 classification(분류) 과제</U>('k' 개의 다른 이벤트에 대해 이벤트의 확률 분포를 계산)라면 주어진 한 층에서 $ \bar{v} = [v_1, ..., v_k] $ 를 출력하는 softmax activation function을 이용해서 k개의 값을 출력할 수 있다.
 
 좀 더 구체적으로 말하자면, i번째 output의 activation function은 다음과 같이 정의된다.
 
@@ -572,6 +615,10 @@ non-parametric은 대체로 더 flexible한 모델이 만들어지지만, 모델
 
 다층 신경망에서는 loss function이 이전 layer들의 weight에 대한 복잡한 합성 함수로 구성되기 때문에 훈련이 어렵다. 다층망 훈련에서는 이 합성 함수의 기울기를 **backpropagation algorithm**(역전파 알고리즘)을 이용해 계산한다.
 
+역전파 알고리즘은 **dynamic programming**(동적 계획법)을 이용해서 합을 효율적으로 계산한다. dynamic programming이란 '하나의 큰 문제를 여러 작은 문제로 나눠서 푼 결과를 저장해 둔 뒤, 다시 어떤 문제를 해결할 때 재사용'하는 것을 의미한다. 
+
+> dynamic programming을 쉽게 말하면 앞서 구한 답을 다른 문제에서 다시 사용해서 해결하는 방식을 의미한다.
+
 > 특정 weight로 loss function을 미분해서, loss function이 최솟값을 갖는 weight로 업데이트할 것이다. 따라서 각 weight로 loss function을 편미분한 값을 구할 수 있어야 전체적인 보정이 가능할 것이다.
 
 backpropagation은 두 phase로 구성되는데, 하나는 **forward**(순방향), 다른 하나는 **backward**(역방향)이다.
@@ -610,26 +657,79 @@ $$ { {\partial L} \over {\partial w_{(h_{r-1},h_r)}}} = {{\partial L} \over {\pa
 
 $$ { {\partial L} \over {\partial w_{(h_{r-1},h_r)}}} = {{\partial L} \over {\partial o}} \cdot \left[ {\sum_{[h_r, h_{r+1}, ..., h_k, o] \in \mathcal{P}}} {{\partial o} \over {\partial h_k}} \prod_{i=r}^{k-1} {{\partial h_{i+1}} \over {\partial h_i}} \right] {{\partial h_r} \over {\partial w_{(h_{r-1},h_r)}}} $$
 
-우변의 $ {{\partial h_r} \over {\partial w_{(h_{r-1},h_r)}}} $ 부분을 제외한 경로 합산 부분은 $ \Delta (h_r, o) = {{\partial L} \over {\partial h_r}} $ 을 계산한다. 전체적인 과정은 다음과 같이 정리할 수 있다.
+위 식에서 우변의 $ { {\partial h_r} \over {\partial w_{(h_{r-1},h_r)}} } $ 부분을 제외한 경로 합산 부분은 $ \Delta (h_r, o) = {{\partial L} \over {\partial h_r}} $ 을 계산한다. 
 
-- 먼저 $o$ 에 가장 가까운 노드 $ h_k $ unit들에 대해 $ \Delta (h_r, o) $ 를 계산한다.
+![수식 내부 설명 1](images/backpropagation_delta_hr_o.png)
 
-- layer 노드들의 값을 이용해서 이전 layer 노드들의 값을 계산하는 재귀 과정을 거치면서 답을 구한다.
+경로 합산 부분으로 지칭한 부분은 굉장히 많은 합산이 필요해서 감당하기 어려워 보이지만, 재귀적인 식으로 나타내서 보면 쉽게 정리할 수 있다.
 
-  - 각 출력 노드의  $ \Delta (o, o) $ 값은 $ \Delta (o, o) = { {\partial L} \over {\partial o} } $ 로 초기화된다.
+---
+### <span style='background-color: #393E46; color: #F7F7F7'>&nbsp;&nbsp;&nbsp;📖 수식 정리: 여러 경로로 구성된 backpropagation&nbsp;&nbsp;&nbsp;</span>
 
-  - 이런 재귀 과정을 점화식 형태로 표현하면 다음과 같다.
+0. 구해야 할 값
 
-  $$ \Delta (h_r, o) = \sum_{h:h_r \Rightarrow h} \phi ' (a_h) \cdot w_{h_r, h} \cdot \Delta (h, o) $$
+정리하기 전에 먼저 무엇을 chain rule을 이용해 구하려고 했는지 상기하고 가자. 우리는 어떤 hidden unit $ h_r $ 에서 $ h_{r+1} $ 로의 연결(edge)에서 계산되는 weight가 $ w_{(h_r, h_{r+1})} $ 이고, 이 weight는 다음과 같았다.
+
+$$ { {\partial L} \over {\partial w_{(h_{r-1},h_r)}}} $$
+
+<br/>
+
+1. 출력 노드의 값
+
+차근차근 chain rule을 계산해 보자. 우선 각 출력 노드 $ \Delta(o,o) $ 의 값은 다음과 같이 초기화된다.
+
+$$ \Delta (o, o) = {{\partial L} \over {\partial o}} $$
+
+<br/>
+
+2. 특정 node에서의 output 값 $ h_r $의 $o$ 에 대한 편미분 값(재귀)
+
+$\Delta (h_r, o)$ 를 multivariable chain rule으로 유도한 수식을 재귀식으로 작성할 수 있다.
+
+$$ \Delta (h_r, o) = {{\partial L } \over {\partial h_r}} = \sum_{h:h_r \Rightarrow h} {{\partial L} \over {\partial h}}{{\partial h} \over {\partial h_r}} = \sum_{h:h_r \Rightarrow h} {{\partial h} \over {\partial h_r}} \Delta (h, o) $$
+
+그런데 dynamic programming인 backpropagation에서 $\Delta (h_r, o)$ 를 평가하는 시점이라면, 이미 $\Delta (h, o)$ 는 계산된 상태이다. 따라서 ${{\partial h} \over {\partial h_r}}$ 를 평가해야 한다.
+
+<br/>
+
+3. ${{\partial h} \over {\partial h_r}}$ 의 값을 계산
+
+우선 $h_r$ 과 $h$ 를 연결하는 edge의 weight는 $w_{(h_r, h)}$ 이다. 여기서 hidden unit $h$ 에서 activation function을 적용하기 전에 계산된 활성화 전 값을 $a_h$ 라고 하자. 즉, $a_h$ 는 $h$ 보다 이전 layer의 unit에서 온 input들의 선형 결합이므로, $h = \phi(a_h)$ 이다. 그러면 다음과 같이 공식을 유도할 수 있다.
+
+$$ {{\partial h} \over {\partial h_r}} = {{\partial h} \over {\partial a_h}} \cdot {{\partial a_h} \over {\partial h_r}} = {{\partial \phi(a_h)} \over {\partial a_h}} \cdot w_{(h_r, h)} = \phi ' (a_h) \cdot w_{(h_r, h)} $$
+
+<br/>
+
+4. $\Delta (h_r, o)$ 를 재귀식으로 작성
+
+위 유도과정에 따라 $\Delta (h_r, o)$ 를 재귀식으로 작성하면 다음과 같다.
+
+$$ \Delta (h_r, o) = \sum_{h:h_r \Rightarrow h} \phi ' (a_h) \cdot w_{(h_r, h)} \cdot \Delta (h, o) $$
+
+모든 edge weight에 대한 기울기를 구하기 위해서는 이 수식을 node로 들어오는 edge마다 수행해야 한다.
+
+<br/>
+
+5. ${{\partial h_r} \over {\partial w_{(h_{r-1},h_r)}}}$ 계산
 
 마지막으로 $ {{\partial h_r} \over {\partial w_{(h_{r-1},h_r)}}} $ 부분은 다음과 같이 간단히 계산할 수 있다.
 
 $$ {{\partial h_r} \over {\partial w_{(h_{r-1},h_r)}}} = h_{r-1} \cdot \phi'(a_{h_r}) $$
 
+<br/>
+
 이상의 과정에서 backpropagation되는 핵심 기울기는 **layer activation**(층 활성화 값)들에 대한 미분이다.
 
 가중치에 대한 loss function의 편미분은 다음 점화식으로 더 흔하게 표현된다.
 
-$$ {{\partial L} \over {\partial w_{(h_{r-1},h_r)}}} = \partial(h_r, o) \cdot h_{r-1} $$
+$$ {{\partial L} \over {\partial w_{(h_{r-1},h_r)}}} = \delta(h_r, o) \cdot h_{r-1} $$
+
+- 여기서 $\delta(h_r, o)$ 는 다음을 의미한다.(위와 비슷한 과정을 통해 재귀식으로 표현했다.)
+
+$$\delta(h_r, o) = {{\partial L} \over {\partial a_h}} = \phi ' (a_h) \sum_{h:h_r \Rightarrow h}{w_{(h_r, h)}} \cdot \delta(h,o)$$
+
+- $\delta(o, o)$ 는 다음과 같이 초기화한다.
+
+$$ \delta(o, o) = {{\partial L} \over {\partial a_o}} = \phi ' (a_o) \cdot {{\partial L} \over {\partial o}} $$
 
 ---
