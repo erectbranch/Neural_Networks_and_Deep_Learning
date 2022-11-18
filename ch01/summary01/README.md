@@ -312,23 +312,23 @@ $$ \overline{W} \Leftarrow \overline{W} + \alpha \sum_{(\overline{X}, y) \in S^{
 
 단층 퍼셉트론을 벗어나서 다층 구조로 넘어가면 비선형 활성화 함수가 아주 중요해진다. **sign**, **sigmoid**, **tanh**(hyperbolic tangent, 쌍곡탄젠트) function과 같은 여러 함수를 신경망의 여러 층에 사용할 수 있다.
 
-앞으로 activation function을 다음과 같이 $\phi^{피}$ 로 표기할 것이다.<br/>
+앞으로 activation function을 다음과 같이 $\Phi^{피}$ 로 표기할 것이다.<br/>
 
-$$ \hat{y} = \phi ( \overline{W} \cdot \overline{X} ) $$
+$$ \hat{y} = \Phi ( \overline{W} \cdot \overline{X} ) $$
 
 이 활성화 함수는 하나의 뉴런이 노드 안에서 계산하는 두 개의 함수 중 하나이다. 
 
 ![활성화 전 값과 활성화 후 값](images/activation_before_after.png)
 
-그림을 보면 하나의 뉴런 안에서 두 번의 함수 계산이 이루어 진다. 활성화 함수 $\phi( \cdot )$ 를 계산하기 전의 값을 **pre-activation value**(활성화 전 값)이라고 부르고, 적용 뒤의 값을 **post-activation value**(활성화 후 값)이라고 부른다.
+그림을 보면 하나의 뉴런 안에서 두 번의 함수 계산이 이루어 진다. 활성화 함수 $\Phi( \cdot )$ 를 계산하기 전의 값을 **pre-activation value**(활성화 전 값)이라고 부르고, 적용 뒤의 값을 **post-activation value**(활성화 후 값)이라고 부른다.
 
 > 한 뉴런의 출력은 항상 post-activation value이지만, pre-activation value도 다양한 분석에서 쓰인다. 이를테면, backpropagation algorithm(역전파 알고리즘)은 pre-actication value를 이용한다.
 
 ### 활성화 함수의 종류
 
-- 가장 기본적인 activation function $\phi( \cdot )$ 는 비선형성을 전혀 제공하지 않는 linear activation function, 즉 **identity function**과 동일하다.
+- 가장 기본적인 activation function $\Phi( \cdot )$ 는 비선형성을 전혀 제공하지 않는 linear activation function, 즉 **identity function**과 동일하다.
 
-$$ \phi(v) = v $$
+$$ \Phi(v) = v $$
 
 <U>target이 실수</U>일 때는 이런 linear activation function이 출력 노드에 주로 쓰인다. <U>output이 이산값이라고 해도, smoothed surrogate loss function을 설정해야 하는 경우</U>면 linear activation function이 쓰인다.
 
@@ -336,19 +336,19 @@ $$ \phi(v) = v $$
 
 - **sign function**
 
-$$ \phi(v) = sgn(v) $$
+$$ \Phi(v) = sgn(v) $$
 
 결과를 예측하는 시점에서 <U>binary output을 산출하기 위해</U> sign function을 쓸 수 있지만, 훈련 시점에서는 미분이 불가능하므로 loss function으로 사용할 수 없다.
 
 - **sigmoid function**
 
-$$ \phi(v) = { 1 \over { 1 +e^{-v} }} $$
+$$ \Phi(v) = { 1 \over { 1 +e^{-v} }} $$
 
 (0,1) 범위의 실숫값을 출력하는 sigmoid function은 <U>결과를 확률로 해석해야 할 때</U> 좋다. 더 나아가서 <U>확률적 출력은 생성하거나, maximum-likelihood(최대가능도) 모형에 기초해서 loss function을 만들 때</U>도 도움이 된다.
 
 - **tanh function**
 
-$$ \phi(v) = { {e^{2v} - 1} \over {e^{2v} + 1} } $$
+$$ \Phi(v) = { {e^{2v} - 1} \over {e^{2v} + 1} } $$
 
 tanh function은 sigmoid와 비슷하나, 치역이 [-1, 1]이 되도록 수평 $\cdot$ 수직으로 비례 $\cdot$ 이동된 것이다. 둘의 관계는 다음과 같다.
 
@@ -360,11 +360,11 @@ $$ tanh(v) = 2 \cdot sigmoid(2v) - 1 $$
 
 - ReLU(Retified Linear Unit, 정류(개선) 선형 단위)
 
-$$ \phi(v) = max \lbrace v, 0\rbrace $$
+$$ \Phi(v) = max \lbrace v, 0\rbrace $$
 
 - hardtanh(엄격한 쌍곡탄젠트)
 
-$$ \phi(v) = max\lbrace min[v,1], -1 \rbrace $$
+$$ \Phi(v) = max\lbrace min[v,1], -1 \rbrace $$
 
 ![여러 가지 활성화 함수](images/activation_functions.png)
 
@@ -384,7 +384,7 @@ $$ \phi(v) = max\lbrace min[v,1], -1 \rbrace $$
 
 좀 더 구체적으로 말하자면, i번째 output의 activation function은 다음과 같이 정의된다.
 
-$$ \phi{(\bar{v})}_i = {{exp(v_i)} \over {\sum_{j=1}^{k}{exp(v_j)}}}, \forall i \in \lbrace 1, ..., k \rbrace $$
+$$ \Phi{(\bar{v})}_i = {{exp(v_i)} \over {\sum_{j=1}^{k}{exp(v_j)}}}, \forall i \in \lbrace 1, ..., k \rbrace $$
 
 - $v_1, ... v_k$ : 각 노드로 들어온 입력
 
@@ -568,15 +568,15 @@ d 차원 입력 벡터 $\bar{x}$ 는 다음과 같은 재귀식(점화식)을 �
 
 1. 입력에서 은닉층으로
 
-$$ {\bar{h}_1} = \phi (W_{1}^{T}\bar{x}) $$
+$$ {\bar{h}_1} = \Phi (W_{1}^{T}\bar{x}) $$
 
 2. 은닉층에서 은닉층으로
 
-$$ {\bar{h}_{p+1}} = \phi (W_{p+1}^{T}\bar{h}_p) \quad \forall p \in \lbrace1 ... k-1 \rbrace $$
+$$ {\bar{h}_{p+1}} = \Phi (W_{p+1}^{T}\bar{h}_p) \quad \forall p \in \lbrace1 ... k-1 \rbrace $$
 
 3. 은닉층에서 출력층으로
 
-$$ {\bar{o}} = \phi (W_{k+1}^{T}\bar{h}_k) $$
+$$ {\bar{o}} = \Phi (W_{k+1}^{T}\bar{h}_k) $$
 
 이 과정에서 sigmoid와 같은 activation function은 주어진 벡터 인수에 **성분별로**(elementwise) 적용된다. 
 
@@ -725,9 +725,9 @@ $$ \Delta (h_r, o) = {{\partial L } \over {\partial h_r}} = \sum_{h:h_r \Rightar
 
 3. ${{\partial h} \over {\partial h_r}}$ 의 값을 계산
 
-우선 $h_r$ 과 $h$ 를 연결하는 edge의 weight는 $w_{(h_r, h)}$ 이다. 여기서 hidden unit $h$ 에서 activation function을 적용하기 전에 계산된 활성화 전 값을 $a_h$ 라고 하자. 즉, $a_h$ 는 $h$ 보다 이전 layer의 unit에서 온 input들의 선형 결합이므로, $h = \phi(a_h)$ 이다. 그러면 다음과 같이 공식을 유도할 수 있다.
+우선 $h_r$ 과 $h$ 를 연결하는 edge의 weight는 $w_{(h_r, h)}$ 이다. 여기서 hidden unit $h$ 에서 activation function을 적용하기 전에 계산된 활성화 전 값을 $a_h$ 라고 하자. 즉, $a_h$ 는 $h$ 보다 이전 layer의 unit에서 온 input들의 선형 결합이므로, $h = \Phi(a_h)$ 이다. 그러면 다음과 같이 공식을 유도할 수 있다.
 
-$$ {{\partial h} \over {\partial h_r}} = {{\partial h} \over {\partial a_h}} \cdot {{\partial a_h} \over {\partial h_r}} = {{\partial \phi(a_h)} \over {\partial a_h}} \cdot w_{(h_r, h)} = \phi ' (a_h) \cdot w_{(h_r, h)} $$
+$$ {{\partial h} \over {\partial h_r}} = {{\partial h} \over {\partial a_h}} \cdot {{\partial a_h} \over {\partial h_r}} = {{\partial \Phi(a_h)} \over {\partial a_h}} \cdot w_{(h_r, h)} = \Phi ' (a_h) \cdot w_{(h_r, h)} $$
 
 <br/>
 
@@ -735,7 +735,7 @@ $$ {{\partial h} \over {\partial h_r}} = {{\partial h} \over {\partial a_h}} \cd
 
 위 유도과정에 따라 $\Delta (h_r, o)$ 를 재귀식으로 작성하면 다음과 같다.
 
-$$ \Delta (h_r, o) = \sum_{h:h_r \Rightarrow h} \phi ' (a_h) \cdot w_{(h_r, h)} \cdot \Delta (h, o) $$
+$$ \Delta (h_r, o) = \sum_{h:h_r \Rightarrow h} \Phi ' (a_h) \cdot w_{(h_r, h)} \cdot \Delta (h, o) $$
 
 모든 edge weight에 대한 기울기를 구하기 위해서는 이 수식을 node로 들어오는 edge마다 수행해야 한다.
 
@@ -745,7 +745,7 @@ $$ \Delta (h_r, o) = \sum_{h:h_r \Rightarrow h} \phi ' (a_h) \cdot w_{(h_r, h)} 
 
 마지막으로 ${{\partial h_r} \over {\partial w_{(h_{r-1},h_r)}}}$ 부분은 다음과 같이 간단히 계산할 수 있다.
 
-$$ {{\partial h_r} \over {\partial w_{(h_{r-1},h_r)}}} = h_{r-1} \cdot \phi'(a_{h_r}) $$
+$$ {{\partial h_r} \over {\partial w_{(h_{r-1},h_r)}}} = h_{r-1} \cdot \Phi'(a_{h_r}) $$
 
 <br/>
 
@@ -757,10 +757,10 @@ $$ {{\partial L} \over {\partial w_{(h_{r-1},h_r)}}} = \delta(h_r, o) \cdot h_{r
 
 - 여기서 $\delta(h_r, o)$ 는 다음을 의미한다.(위와 비슷한 과정을 통해 재귀식으로 표현했다.)
 
-$$\delta(h_r, o) = {{\partial L} \over {\partial a_h}} = \phi ' (a_h) \sum_{h:h_r \Rightarrow h}{w_{(h_r, h)}} \cdot \delta(h,o)$$
+$$\delta(h_r, o) = {{\partial L} \over {\partial a_h}} = \Phi ' (a_h) \sum_{h:h_r \Rightarrow h}{w_{(h_r, h)}} \cdot \delta(h,o)$$
 
 - $\delta(o, o)$ 는 다음과 같이 초기화한다.
 
-$$ \delta(o, o) = {{\partial L} \over {\partial a_o}} = \phi ' (a_o) \cdot {{\partial L} \over {\partial o}} $$
+$$ \delta(o, o) = {{\partial L} \over {\partial a_o}} = \Phi ' (a_o) \cdot {{\partial L} \over {\partial o}} $$
 
 ---
