@@ -426,7 +426,7 @@ $$ L = log(1+exp(-y \cdot \hat{y})) $$
 
 sigmoid를 activation function으로 사용해서 예측값 $\hat{y} \in (0, 1)$ 을 출력할 수도 있는데, 이 경우 $\hat{y}$ 은 y가 1일 확률을 뜻한다.
 
-y가 가질 수 있는 값을 $\lbrace -1, 1 \rbrace$ 로 가정할 때 손실함수는 $| y/2 - 0.5 + \hat{y} |$ 의 음의 log likelihood이다.(가능도 함수의 로그) 이는 $| y/2 - 0.5 + \hat{y} |$ 가 '예측이 정확할 확률'을 나타내기 때문이다.
+y가 가질 수 있는 값을 $\lbrace -1, 1 \rbrace$ 로 가정할 때 loss function은 $| y/2 - 0.5 + \hat{y} |$ 의 음의 log likelihood이다.(가능도 함수의 로그) 이는 $| y/2 - 0.5 + \hat{y} |$ 가 '예측이 정확할 확률'을 나타내기 때문이다.
 
 위 두 예는 activation function과 loss function의 다른 조합으로도 동일한 결과를 낼 수 있음을 보여준다.
 
@@ -453,6 +453,36 @@ $$ L = - log(\hat{y}_r) $$
   - activation function: linear
 
   - loss function: square error
+
+---
+
+### <span style='background-color: #393E46; color: #F7F7F7'>&nbsp;&nbsp;&nbsp;🔒 정의: Entropy와 Cross-Entropy&nbsp;&nbsp;&nbsp;</span>
+
+1. **Entropy**
+
+**Entropy**(엔트로피)는 불확실성을 나타내며, 클수록 정보가 많고 확률은 낮다는 사실을 의미한다. 쉽게 생각하면 **어떤 데이터가 나올지를 예측하기 어려운 정도**로 생각하면 된다.
+
+$$ H(x) = - \sum_{i=1}^{n}{p(x_i) \log p(x_i)} $$
+
+앞/뒷면 으로 확률을 계산하는 동전 던지기와, 1~6 숫자로 확률을 계산하는 주사위 던지기를 비교하면 더 이해가 쉽다.
+
+- 동전 던지기
+
+$$ H(x) = - \left( {1 \over 2} \log {1 \over 2} + {1 \over 2} \log {1 \over 2} \right) = 0.693 $$
+
+- 정육면체 주사위 던지기
+
+$$ H(x) = - \left( {1 \over 6} \log {1 \over 6} + {1 \over 6} \log {1 \over 6} + {1 \over 6} \log {1 \over 6} + {1 \over 6} \log {1 \over 6} + {1 \over 6} \log {1 \over 6} + {1 \over 6} \log {1 \over 6} \right) = 1.79 $$
+
+로그 계산값 앞에 마이너스(-)가 붙는 것도, $y=-\log x$ 함수에서 $x < 1$ 에서는 $x$ 가 작을수록 $y$ 값이 커진다는 점을 생각하면 그 이유를 알 수 있다.
+
+<br/>
+
+2. **Cross-Entropy**
+
+**Cross-Entropy**(크로스 엔트로피)는 실제 분포 $p$ 와, model로 구한 분포 $q$ 가 있을 때 사용한다. 만약 예측값이 실제값과 일치하는 경우라면 0으로 수렴하고, 값이 다르다면 커지게 된다.
+
+$$ H(p, q) = - \sum_{i}{p_i \log{q_i}} $$
 
 ---
 
