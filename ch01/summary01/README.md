@@ -34,7 +34,7 @@
 
 가장 단순한 형태의 신경망을 퍼셉트론이라 부른다. 이 신경망은 입력층 하나와 출력 노드 하나로 구성된다.
 
-- 훈련 사례: ($\bar{X}, y$)
+- 훈련 사례: ( $\bar{X}, y$ )
 
   - $\bar{X} = \left[x_{1},...,x_{d}\right]$: d개의 feature(특징) 변수들
 
@@ -44,9 +44,9 @@
 
 훈련은 다음의 과정을 거치며 진행된다.
 
-1. 입력층은 d개의 노드(Activation **Units**)로 구성되며 d개의 feature로 이루어진 벡터 $\bar{X}=\left[x_{1},...x_{d}\right]$를, 가중치가 $\bar{W}=\left[ w_{1} ... w_{d} \right]$인 edge(간선)들을 통해 출력 노드에 전달한다.
+1. 입력층은 d개의 노드(Activation **Units**)로 구성되며 d개의 feature로 이루어진 벡터 $\bar{X}=\left[x_{1},...x_{d}\right]$를, 가중치가 $\bar{W}=\left[ w_{1} ... w_{d} \right]$ 인 edge(간선)들을 통해 출력 노드에 전달한다.
 
-2. 선형 함수 $\bar{W} \cdot \bar{X} = \sum_{i=1}^d{w_{i}x_{i}}$는 출력 노드에서 계산된다.(입력층 자체는 그 어떤 계산도 수행하지 않는다.)
+2. 선형 함수 $\bar{W} \cdot \bar{X} = \sum_{i=1}^{d}{w_{i}x_{i}}$ 는 출력 노드에서 계산된다.(입력층 자체는 그 어떤 계산도 수행하지 않는다.)
 
 3. 신경망은 이 함수가 산출한 실숫값의 부호를 이용해서, $\bar{X}$의 종속변수를 예측한다.
 
@@ -62,7 +62,7 @@ $$ \hat{y} = sgn\lbrace\bar{W} \cdot \bar{X} \rbrace = sgn\lbrace\sum_{j=1}^d w_
 
 ![실수 부호 함수](images/sgn.png)
 
-여기선 sgn은 sign function(부호 함수)이다. $sgnx = 2H(x) - 1$($H(x)$는 unit step function(단위 계단 함수, =헤비사이드 계단 함수))과 동일하다. 0에서 불연속이며, 실숫값을 +1 또는 -1로 mapping(사상)하므로 이진 분류 과제에 적합하다.
+여기선 sgn은 sign function(부호 함수)이다. $sgnx = 2H(x) - 1$ ( $H(x)$ 는 unit step function(단위 계단 함수, =헤비사이드 계단 함수))과 동일하다. 0에서 불연속이며, 실숫값을 +1 또는 -1로 mapping(사상)하므로 이진 분류 과제에 적합하다.
 
 ---
 
@@ -90,7 +90,7 @@ $$ \hat{y} = sgn\lbrace\bar{W} \cdot \bar{X} \rbrace = sgn\lbrace\sum_{j=1}^d w_
 
 - $\hat{f}(x)$: 예측 모델에 feature 변수을 input으로 주었을 때, 모델이 출력한 예측값들이다.(predicted value)
 
-- $E[\hat{f}(x)]$: 모델이 출력한 예측값들($\hat{f}(x)$)의 평균(기댓값)이다. 대표 예측값으로 볼 수 있다.(average predicted value)
+- $E[\hat{f}(x)]$: 모델이 출력한 예측값들( $\hat{f}(x)$ )의 평균(기댓값)이다. 대표 예측값으로 볼 수 있다.(average predicted value)
 
 **bias**란 바로 **모델이 출력한 예측값 - 실제 정답의 평균**이다. 즉, bias가 크다는 것은 그만큼 예측값이 정답과 차이가 크다는 의미다.
 
@@ -168,11 +168,11 @@ model.add(Dense(2, input_dim=3, activation='softmax'))
 
 $$ \begin{bmatrix} x_1 \, x_2 \, x_3 \end{bmatrix} \cdot \begin{bmatrix} w_1 \, \, w_4 \\ w_2 \, \, w_5 \\ w_3 \, \, w_6 \end{bmatrix} + \begin{bmatrix} b_1, b_2 \end{bmatrix} = \begin{bmatrix} y_1 \, \, y_2 \end{bmatrix} $$
 
-- $\begin{bmatrix} w_1 \, w_2 \, w_3 \end{bmatrix}$ : $y_1$ node로 향하는 edge들의 weight들
+- [ $w_1 \, w_2 \, w_3$ ] : $y_1$ node로 향하는 edge들의 weight들
 
-- $\begin{bmatrix} w_4 \, w_5 \, w_6 \end{bmatrix}$ : $y_2$ node로 향하는 edge들의 weight들
+- [ $w_4 \, w_5 \, w_6$ ] : $y_2$ node로 향하는 edge들의 weight들
 
-- $\begin{bmatrix} b_1 \, b_2 \end{bmatrix}$ : bias
+- [ $b_1 \, b_2$ ] : bias
 
 이를 계산하는 과정을 수식으로 쓰면 다음과 같다.
 
@@ -282,7 +282,7 @@ $$ \overline{W} \Leftarrow \overline{W} + \alpha \sum_{(\overline{X}, y) \in S^{
 
 - 여기서 $S^{+}$ 는 $y(\overline{W} \cdot \overline{X}) < 0$ 를 만족하는 오분류된 train point $\overline{X} \in S$ 의 집합이다.
 
-퍼셉트론은 갱신을 위해 오차 $E(\overline{X})$ 를 사용하지만, 이 갱신은 y를 사용한다.($y \in \lbrace -1, +1 \rbrace$) 하지만 사실상 둘은 같은 것이다. 
+퍼셉트론은 갱신을 위해 오차 $E(\overline{X})$ 를 사용하지만, 이 갱신은 y를 사용한다.( $y \in \lbrace -1, +1 \rbrace$ ) 하지만 사실상 둘은 같은 것이다. 
 
 그 이유는 퍼셉트론도 오분류 data point에서는 오차값 $E(\overline{X}) = (y - sgn\lbrace \overline{W} \cdot \overline{X} \rbrace) \in \lbrace -2, +2 \rbrace$ 역시 결코 0이 되지 않기 때문이다. 즉, 항상 오분류 data point에서는 $E(\overline{X}) = 2y$ 가 성립한다. 사실상 계수 2를 learning rate에 포함시키고 $E(\overline{X})$ 를 $y$ 로 대체한다면, SVM과 동일한 갱신 공식이 된다.
 
@@ -290,7 +290,7 @@ $$ \overline{W} \Leftarrow \overline{W} + \alpha \sum_{(\overline{X}, y) \in S^{
 
 1. 퍼셉트론 목적함수는 '오분류된 data point'만 weight의 갱신이 적용되지만, <U>SVM은 결정 결계 근처의 정확한 점들도 갱신에 쓰인다</U>.
 
-2. SVM은 $y(\overline{W} \cdot \overline{X}) < 1$ 이라는 조건을 이용해서 $S^+$ 를 정의했다. ($y(\overline{W} \cdot \overline{X}) < 0$ 이 아니다.)
+2. SVM은 $y(\overline{W} \cdot \overline{X}) < 1$ 이라는 조건을 이용해서 $S^+$ 를 정의했다. ( $y(\overline{W} \cdot \overline{X}) < 0$ 이 아니다.)
 
 > 결국 퍼셉트론은 SVM으로 잘 알려진 기계 학습 알고리즘과 근본적으로 그리 다르지 않다.(기원만 조금 다를 뿐)
 
@@ -312,8 +312,9 @@ $$ \overline{W} \Leftarrow \overline{W} + \alpha \sum_{(\overline{X}, y) \in S^{
 
 단층 퍼셉트론을 벗어나서 다층 구조로 넘어가면 비선형 활성화 함수가 아주 중요해진다. **sign**, **sigmoid**, **tanh**(hyperbolic tangent, 쌍곡탄젠트) function과 같은 여러 함수를 신경망의 여러 층에 사용할 수 있다.
 
-> 앞으로 activation function을 다음과 같이 $\phi^{피}$ 로 표기할 것이다.<br/>
-> $$ \hat{y} = \phi ( \overline{W} \cdot \overline{X} ) $$
+앞으로 activation function을 다음과 같이 $\phi^{피}$ 로 표기할 것이다.<br/>
+
+$$ \hat{y} = \phi ( \overline{W} \cdot \overline{X} ) $$
 
 이 활성화 함수는 하나의 뉴런이 노드 안에서 계산하는 두 개의 함수 중 하나이다. 
 
@@ -325,7 +326,7 @@ $$ \overline{W} \Leftarrow \overline{W} + \alpha \sum_{(\overline{X}, y) \in S^{
 
 ### 활성화 함수의 종류
 
-- 가장 기본적인 activation function $ \phi( \cdot ) $ 는 비선형성을 전혀 제공하지 않는 linear activation function, 즉 **identity function**과 동일하다.
+- 가장 기본적인 activation function $\phi( \cdot )$ 는 비선형성을 전혀 제공하지 않는 linear activation function, 즉 **identity function**과 동일하다.
 
 $$ \phi(v) = v $$
 
@@ -425,7 +426,7 @@ $$ L = log(1+exp(-y \cdot \hat{y})) $$
 
 sigmoid를 activation function으로 사용해서 예측값 $\hat{y} \in (0, 1)$ 을 출력할 수도 있는데, 이 경우 $\hat{y}$ 은 y가 1일 확률을 뜻한다.
 
-y가 가질 수 있는 값을 $\lbrace -1, 1 \rbrace$ 로 가정할 때 손실함수는 $| y/2 - 0.5 + \hat{y}$ 의 음의 log likelihood이다.(가능도 함수의 로그) 이는 $| y/2 - 0.5 + \hat{y}$ 가 '예측이 정확할 확률'을 나타내기 때문이다.
+y가 가질 수 있는 값을 $\lbrace -1, 1 \rbrace$ 로 가정할 때 손실함수는 $| y/2 - 0.5 + \hat{y} |$ 의 음의 log likelihood이다.(가능도 함수의 로그) 이는 $| y/2 - 0.5 + \hat{y} |$ 가 '예측이 정확할 확률'을 나타내기 때문이다.
 
 위 두 예는 activation function과 loss function의 다른 조합으로도 동일한 결과를 낼 수 있음을 보여준다.
 
