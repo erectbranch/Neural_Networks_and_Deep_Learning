@@ -230,6 +230,196 @@ model의 generalization 능력을 키우기 위해 **bagging**(배깅)과 같은
 
 > Bagging은 Bootstrap Aggregation의 약자다. sample을 여러 번 뽑아(Bootstrap) 각 모델을 학습시켜 결과물을 집계(Aggregation)하는 방법이다.
 
-신경망에 특화된 앙상블 방법도 여럿 있는데, 대표적으로 **dropout**(드롭아웃), **dropconnect**(드롭커넥트)가 있다. 대체로 accuracy를 약 2% 증가시키는 것이 가능하다. 그러나 구체적인 개선 정도는 어떤 자료인가, 어떤 training 방법인가에 달렸다. 예를 들어 hidden layer의 activation을 normalization(정규화)해 버리면 dropout의 효과가 줄어들 수 있다.
+신경망에 특화된 앙상블 방법도 여럿 있는데, 대표적으로 **dropout**(드롭아웃), **dropconnect**(드롭커넥트)가 있다. 대체로 accuracy를 약 2% 증가시키는 것이 가능하다. 그러나 구체적인 개선 정도는 어떤 자료인가, 어떤 training 방법인가에 달렸다. 예를 들어 hidden layer의 activation에서 normalization(정규화)를 적용했다면 dropout의 효과가 줄어들 수 있다.
+
+---
+
+## 1.4.2 gradient vanishing, explosion problem
+
+layer가 많은 신경망에서는 chain rule을 이용한 backpropagation이 불안전해지는 문제가 생긴다. 특정 신경망에서는 input과 가까운 앞쪽 layer의 갱신량이 무시할 수준으로 작아지거나(소실) 너무 커질(폭발) 수 있다.
+
+예시로 각 layer가 1개의 unit으로 구성된 다층 신경망을 생각해 보자. 이 경우 한 경로마다의 국소 미분은 activation function의 미분에 weight를 곱한 것이고, backpropagation을 적용하면 이 값들은 계속 곱해질 것이다.
+
+근데 경로마다의 각 값이 무작위로 분포되어 있고, 그 기댓값이 1보다 작다면 결국 계속 곱할 때마다 값은 지수적으로 작아질 것이다.(반대로 각 값의 기댓값이 1보다 크면 기울기 폭발이 일어날 가능성이 크다.)
+
+예로 sigmoid activation에서는 <U>미분값이 인수의 모든 값에서 0.25 미만</U>이다. 심지어 <U>saturation 영역에 도달하면 이보다 더 극도로 작은 미분값</U>을 가지게 된다. 이 때문에 기울기 소실 문제가 잘 발생한다.
+
+한편 ReLU activation에서는 <U>인수가 양수이면 미분값이 항상 1</U>이기 때문에, 비교적 기울기 소실 문제가 덜 발생한다.
+
+이 문제를 해결하기 위해 다양한 요령이 있는데, 그 중에서도 특히 **adaptive learning rate**(적응적 학습 속도)나 **conjugate gradient method**(켤레기울기법)이 도움이 될 때가 많다. 더 나아가서 **batch normalization**(배치 정규화) 같은 기법도 일부 도움이 된다.
+
+---
+
+## 1.4.3 수렴의 어려움
+
+신경망이 깊을수록 기울기들이 신경망을 따라 매끄럽게 흐르지 못하게 만드는 저항이 커진다. vanishing gradient와도 어느 정도 관련은 있지만 이 문제만의 고유한 특징도 있다.
+
+이 문제를 해결하기 위해서 주로 **gating network**(게이트 제어 신경망)이나 **residual network**(잔차 신경망) 등을 사용한다.
+
+---
+
+## 1.4.4 국소 가짜 최적해
+
+신경망의 최적화 함수는 고도로 비선형적이고, **local optimum**(국소 최적해, 극소점 또는 극대점)가 굉장히 많다.(우리가 원하는 해는 global optimum이다.)
+
+매개변수 공간이 크고 local optimum이 많다면, 적당한 initialization point(초기점, 학습 전 weight를 초기화할 값)을 고르기가 쉽지 않다. 
+
+이런 경우 weight initialization을 개선하기 위해 **pretraining**(사전훈련)을 이용하기도 한다. 신경망의 **얕은 부분망**에서 먼저 training을 진행해서 초기 weight를 산출하는 방법이다. 이런 종류의 pretraining은 greedy(탐욕적)하게, 그리고 **layerwise**(층별)하게 수행된다. 즉, 신경망의 각 layer를 한 번에 하나씩 따로 훈련하면서 그 layer의 initialization point를 산출한다.
+
+> unsupervised pretraining(비지도 사전학습)을 적용하면 overfitting에 관련된 문제도 사라지는 경향이 있다.
+
+여기서 핵심은 loss function의 일부 optimum이 train data에만 나타나고 test data에는 나타나지 않는다는 점이다. 비지도 사전학습을 적용하면, initialization point가 test data의 '좋은' optimum이 있는 계곡 바닥 쪽으로 이동하는 경향이 있다.
+
+> 신경망 분야에서는 local optimum 개념을 model generalization의 관점에서 보는 경우가 많다.
+
+---
+
+## 1.4.5 계산의 어려움
+
+텍스트나 이미지 처리에서 신경망을 training하는 데 수 주가 걸리는 일이 드물지 않다. 
+
+---
+
+## 1.5 함수 합성이 강력한 이유
+
+기본적으로 신경망은 단순한 함수들로 구성된 합성 함수를 계산하는 것으로 복잡한 함수의 결과를 산출해 내는 하나의 computational graph이다. 
+
+신경망에 쓰이는 non-linear한 squashing function들은 함수의 여러 성질을 고려해서 세심하게 고안한 것이다. 예를 들어 모든 layer에서 identity function으로 activation한다면, 이 신경망은 linear function만 계산할 수 있다. 
+
+> 결국 모든 층에서 identity activation function을 사용하는 다층 신경망은, linear regression을 수행하는 단층 신경망과 다름 없다.
+
+---
+
+### <span style='background-color: #393E46; color: #F7F7F7'>&nbsp;&nbsp;&nbsp;🔍 증명: identity activation만 사용하는 다층 신경망이 linear regression을 수행하는 단층 신경망과 다를 바 없음&nbsp;&nbsp;&nbsp;</span>
+
+hidden layer가 k인 신경망이 있다. output layer까지 합치면 layer는 총 (k+1) 개이고, 즉 weight matrix도 (k+1) 개이다. 
+
+수식에서 쓰이는 기호는 다음을 의미한다.
+
+- $W_1, ... W_{k+1}$ : weight matrix
+
+- $\bar{x}$ : input 견본에 해당하는 d차원 열벡터
+
+- $\bar{h}_1, ..., \bar{h}_k$ : hidden layer들에 해당하는 열벡터
+
+- $\bar{o}$ : output에 해당하는 m차원 열벡터
+
+이 다층 신경망에서는 다음과 같은 재귀식이 성립한다. activation function $\Phi(\cdot)$ 는 identity function을 의미한다.
+
+$$ \bar{h}_1 = \Phi (W_{1}^T \bar{x}) = W_{1}^{T}\bar{x} $$
+
+$$ \bar{h}_{p+1} = \Phi (W_{p+1}^{T} \bar{h}_p ) = W_{p+1}^{T} \bar{h}_p \quad \forall p \in \lbrace 1,..., k-1 \rbrace $$
+
+$$ \bar{o} = \Phi (W_{k+1}^{T} \bar{h}_k) = W_{k+1}^{T} \bar{h}_k $$
+
+재귀식을 풀자.
+
+$$ \bar{o} = W_{k+1}^{T} W_{k}^{T} ... W_{1}^{T} \bar{x} = (W_1 W_2 ... W_{k+1})^{T} \bar{x} $$
+
+사실상 $(W_1 W_2 ... W_{k+1})^{T}$ 에 대응하는 새로운 ( $d \times m$ ) 행렬 $W_{xo}$ 를 만들어서, 그냥 $W_{xo}$ 의 계수들을 학습시키면 본질적으로 차이가 없는 셈이다.
+
+$$ \bar{o} = W_{xo}^{T} \bar{x} $$
+
+심지어 앞서 $(W_1 W_2 ... W_{k+1})$ 로 학습한 것보다 하나의 행렬로 학습한 것이 더 바람직하다. 왜냐하면 여분의 행렬이 많을수록 <U>매개변수만 많아질 뿐 model의 능력이 좋아지지는 않기 때문</U>이다.
+
+---
+
+보통 sigmoid나 tanh와 같이 특정 구간으로 한정하는 출력을 산출하는 squashing function은, 입력(인수)이 0과 가까울 때 그 기울기가 가장 크다. 인수의 절댓값이 클수록 saturation 상태에 놓이기 때문에 output 값은 그리 변하지 않게 된다. 
+
+squashing function 외에도 인수의 절댓값이 클 때 output 값이 변하지 않는 성질을 가진 함수는 더 있다. 이를테면 non-parametric density estimation(비매개변수적 밀도 추정)에 흔히 쓰이는 **Gaussian kernel**(가우스 핵) function이 그렇다.
+
+$$ \Phi (v) = e^{-v^2/2}  $$
+
+차이가 있다면 gaussian kanel은 인수가 크면 0으로 saturation되는 반면, 앞서 언급한 squashing function들은 -1이나 1로도 saturation된다. 
+
+> 신경망의 보편 근사 정리: 한 hidden layer에 있는 sigmoid unit들(혹은 비슷한 squashing function을 적용)의 선형 결합으로 임의의 함수를 잘 근사할 수 있다.
+
+> 따라서 hidden unit만 충분히 많다면 사실 layer가 단 두 개라도 임의의 함수를 신경망으로 근사할 수 있다.
+
+## 1.5.1 non-linear activation function의 중요성
+
+![data set을 linearly separable하게 만드는 비선형 활성화 함수의 위력](images/non-linear_ex_1.png)
+
+- $A, C$ : 같은 부류의 견본(★)
+
+- $B$ : 다른 부류의 견본(+)
+
+그림의 data set을 보자. $X_1, X_2$ 의 두 차원으로 표시한 그림에서 견본 $A, B, C$ 는 linearly separable하지 않기 때문에, linear activation function만 사용하는 신경망으로는 이 train data를 결코 완벽하게 분류할 수 없다.
+
+하지만 hidden layer들의 activation function이 ReLU이고, 다음과 같은 두 특징 $h_1$ 과 $h_2$ 을 적용하는 것을 목표로 해 보자.
+
+$$ h_1 = max \lbrace X_1, 0 \rbrace $$
+
+$$ h_2 = max \lbrace -X_1, 0 \rbrace $$
+
+이런 학습 목표는 input에서 weight들을 적절하게 설정하고, ReLU activation을 하면 적용할 수 있다. 그림 속 그래프에 설정한 weight 수치가 나타나 있다.
+
+> ReLU unit은 음수 값을 0으로 고정하는 threshold(문턱) function 역할을 한다.
+
+그 결과 견본 $A, B, C$ 가 linearly separable하게 되었다. 어떤 의미로, 첫 layer의 임무는 문제의 해를 linear classification할 수 있게 만드는 **representation learning**(표현 학습)을 수행했다고 말할 수 있다.
+
+이처럼 non-linear한 activation function은 <U>data의 **non-linear mapping**(비선형 사상)이 가능하게 만들며, 덕분에 내장된 point들이 linearly separable하게 된다.</U>
+
+결국 non-linear한 activation function들은 구체적인 종류의 구조를 trained model에 강제하고, 이 능력은 layer의 depth에 비례해서 증가한다.
+
+> XOR 함수의 구현은 특정 부류의 신경망들이 linearly seperable하지 않은 data를 분류할 수 있게 만드는 자질을 검증하는 것과 마찬가지다.
+
+---
+
+## 1.5.2 깊이를 이용한 매개변수 요구수준 감소
+
+deep learning의 핵심은 함수 합성이 반복될수록 신경망에 필요한 기초 함수의 수가 <U>지수적으로(**거듭제곱 규모로**) 감소</U>할 때가 많다.
+
+예를 들어 크기와 높이가 같은 step function(계단)이 1024번 반복되어 연결된 형태의 1차원 function이 있다고 하자. 
+
+![지수적 감소 예제](images/step_function_ex.png)
+
+hidden layer를 하나만 사용한다면 적어도 1024개의 unit이 필요할 것이다. 그러나 다층 신경망이라면 이야기가 다르다.
+
+1층에서는 계단 1개를, 2층에서는 계단 2개를, 3층에서는 4개, r층에서는 $2^r$ 개의 계단을 모형화할 수 있다. 이 예시라면 신경망은 총 10개의 layer가 필요할 것이며, 각 layer에는 이전 layer에서 만든 두 패턴을 합치기 위한 적은 수의 상수 node가 필요하다.
+
+---
+
+## 1.5.3 통상적이지 않은 신경망 구조들
+
+앞서 설명한 전형적인 신경망 구조에서 벗어난 변형들도 존재한다.
+
+## 1.5.3.1 input, hidden, output layer 구분이 모호한 구조
+
+신경망에서는 주로 통상적인 구조가 강요되기 때문에, **그 어떤 종류의 매개변수화된 computational graph로도 신경망을 정의할 수 있다**는 점을 간과하기 쉽다. 
+
+예를 들면 **random forest**에서 영감을 받은 논문이 제안한 신경망에서는 망의 여러 layer에서 input을 허용한다.
+
+![통상적이지 않은 구조 예 1](images/random_forest_similar.png)
+
+또한 loss function을 output node들만이 아니라, hidden node에서 계산하는 경우도 있다. 이런 구조에서 hidden node의 기여는 penalty 형태로 주어져서 일종의 regularization 항으로 쓰일 때가 많다.(hidden layer와 output layer가 모호한 경우에 해당) 
+
+예를 들면 hidden node들에 penalty를 가하는 것으로 sparse(희소)한 특징을 train하는 데 쓰인다.
+
+또한 종종 쓰이는 **skip connection**(건너뛰기 연결)도 모호한 구조를 갖는다. skip connection은 한 layer의 node들을 바로 다음 layer가 아닌 그 이후의 어느 layer에 연결하는 방법을 뜻한다. 
+
+이 방법 덕분에 진정으로 깊은 model이 가능한데, 예를 들어 ResNet은 152층 구조에 skip connection을 사용하여 이미지를 처리한다. input, hidden, output layer의 구분이 흐려지는 것은 아니지만, 이 또한 전형적인 구조에서 벗어난 형태다.
+
+대체로 이런 신경망의 특징 공학은 **iterative**(반복적)이다. 이후 layer들이 이전 layer들의 특징을 반복해서 refinement(정련)하는 것이다.
+
+> 반면 전통적인 방식은 이후 layer들이 이전 layer의 표현들을 점차 추상화한다는 점에서 hierarchical(위계적)하다.
+
+---
+
+## 1.5.3.2 특이한 연산, 합곱망
+
+**LSTM network**(long short-term memory network, 장단기 기억망)이나 CNN 같은 신경망은 연산에서 다양합 종류의 곱셈적 '망각'과 합성곱, pooling 연산 등을 사용한다. 
+
+또한 **sum-product network**(합곱망)이라는 독특한 구조의 신경망이 있는데, node들이 sum(덧셈)이나 product(곱셈)을 수행한다. 
+
+sum node는 weight가 붙은 edge를 쓰는 기존의 linear transformr과 비슷하지만, weight가 반드시 양수라는 제한을 갖는다.
+
+product node는 단순히 input들을 곱하기만 한다. 물론 곱셈의 방식에 따라 다양한 product node가 존재한다. 예를 들면 스칼라 값의 곱셈과 벡터 값의 곱셈을 다르게 처리해야 하는 경우가 있다.
+
+이런 sum-product network의 핵심은 어떤 수학 함수라도 input들의 다항식 함수 형태로 표현할 수 있다는 것이다. 참고로 기존 신경망에서 activation function을 이용해서 비선형성 성질을 제공한 것과 달리, sum-product network는 sum 연산이 비선형성을 제공한다.
+
+> 바탕이 되는 computational graph가 순환하지만 않는다면, 그 어떤 종류의 구조와 계산 연산에서도 backpropagation algorithm을 일반화할 수 있다는 점을 기억하자.
+
+> 이처럼 적절한 domain 지식을 반영해서 세심하게 설계한 구조가, 완전 연결 순방향 신경망을 이용한 블랙박스식 접근보다 더 나은 성과를 내는 경우가 더 많다.
 
 ---
