@@ -30,7 +30,9 @@
 
   > [통상적인 완전 연결 순방향 신경망 개념](https://github.com/erectbranch/Neural_Networks_and_Deep_Learning/tree/master/ch01/summary01): 퍼셉트론 개요, 가중치 갱신, 목적/손실/활성화 함수의 종류와 선택, 활성화 함수의 미분, 다층 신경망 개요, 계산 그래프 개념, Backpropagation
 
-  > [신경망 훈련의 문제점, 합수 합성 개념](https://github.com/erectbranch/Neural_Networks_and_Deep_Learning/tree/master/ch01/summary02): Overfitting과 해결책 - Regularization / 매개변수 공유 / Early stopping / 너비와 깊이의 절충 / Ensemble, 기울기 소실/폭발, 수렴의 어려움, local optimum, 신경망 함수 합성의 강점, 통상적이지 않은 신경망 구조
+  > [신경망 훈련의 문제점, 신경망 합수 합성의 강점](https://github.com/erectbranch/Neural_Networks_and_Deep_Learning/tree/master/ch01/summary02): Overfitting과 해결책 - Regularization / 매개변수 공유 / Early stopping / 너비와 깊이의 절충 / Ensemble, 기울기 소실/폭발, 수렴의 어려움, local optimum, 신경망 함수 합성의 강점
+
+- **여러 신경망 구조**
 
 <br/>
 
