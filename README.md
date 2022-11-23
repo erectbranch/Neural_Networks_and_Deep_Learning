@@ -34,6 +34,8 @@
 
 - **여러 신경망 구조**
 
+  > [여러 신경망 구조 소개](https://github.com/erectbranch/Neural_Networks_and_Deep_Learning/tree/master/ch01/summary03): 통상적이지 않은 신경망 구조, 특이한 연산, sum-product network, 흔히 쓰이는 신경망 - RBF / RBM / RNN / CNN, transfer learning
+
 <br/>
 
 ## :mag: 목차

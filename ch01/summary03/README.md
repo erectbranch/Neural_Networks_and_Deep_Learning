@@ -288,3 +288,18 @@ $$ ||x_0|| = |x_1|^0 + |x_2|^0 + ... + |x_n|^0 $$
 
 ---
 
+### 1.6.6 hierarchical feature model(위계적 특징 공학), transfer learning(전이 학습)
+
+ 순방향 신경망에서 각 output layer의 출력은 data의 변환된 특징 표현이다. 앞쪽 layer의 특징들은 자료의 기초적인 특성을 대표하는 반면, 뒤쪽 layer들은 분류명과 관련해서 의미 있는 좀 더 복잡한 특성을 대표하는 일종의 hierarchical feature model로 볼 수 있다.
+
+![hidden layer에서 특징 공학의 역할](images/hidden_layer_feature.png)
+
+ 뒤쪽 layer의 특징들로 표현된 data는 그 습성이 좋을(특히 linearly seperable한 경우) 때가 많다. image data를 이용한 CNN 같은 분야가 특히 이런 성질이 시각적으로 확연하게 드러난다. 
+
+> 예를 들어 CNN에서 앞쪽 layer는 윤곽선 같은 기초적인 특징을 학습하고(트럭이나 당근), 뒤쪽 layer는 고유하고 더 복잡한 특징(트럭의 바퀴 대 당근 꼬투리 등)을 담을 때가 많다.
+
+ 미리 trained된 model을 사용하는 학습 기법을 **transfer learning**(전이 학습)이라고 한다. 텍스트나 이미지 자료와 관련된 응용에서 특히 흔하게 쓰인다.
+
+ 텍스트 자료는 Wikipedia 같은 표준화된 벤치마크 자료 집합과, word2vec 같은 모형을 이용해서 텍스트 단어들의 표현을 생성한다.  이미지 자료의 경우 대표적인 자료 집합으로 ImageNet이 있다. 이 자료 집합도 미리 훈련해서 얻은 특징들을 다른 종류의 이미지들에 활용할 수 있다.
+
+---
