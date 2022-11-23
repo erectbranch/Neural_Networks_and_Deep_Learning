@@ -254,7 +254,7 @@ $$ L_{i}^{(0/1)} = {1 \over 2}( y_i - sgn \lbrace \overline{W} \cdot \overline{X
 
 그런데 이 목적함수는 계단 형태라서 미분 가능한 함수가 아니다. 따라서 smoothed한 목적함수를 따로 정의할 필요가 있는데, 이를 위해서 위 0/1 손실함수에서 sign 함수를 제거하고 음의 값들을 0으로 설정한다.(퍼셉트론 갱신은 본질적으로 $\overline{W} \Leftarrow \overline{W} + \alpha \nabla \mathbf{w} \overline{X}$ 인 점을 생각하자.)
 
-$$ L_{i} = max \lbrace -y_{i}(\overline{W} \cdot \overline{X_i}, 0) \rbrace $$
+$$ L_{i} = max \lbrace -y_{i}(\overline{W} \cdot \overline{X_i}), 0 \rbrace $$
 
 이렇게 미분 불가능 함수의 기울기 계산을 가능하게 수정한 손실함수를 **smoothed surrogate loss function**(평활화된 대리 손실함수)라고 부르기도 한다. <U>출력이 이산값</U>인 연속 최적화 기반 학습 방법들(신경망 등)은 거의 이런 smoothed surrogate loss function을 사용한다.
 

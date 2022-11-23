@@ -50,6 +50,8 @@ linear regression, SVM, logistic regression, SVD(Singular Value Decomposition, �
 
 더 나아가서, **Widrow-Horr learning model**(위드로-호프 학습 모형)과 같은 여러 신경망 모형은, Fisher's discriminant(피셔의 판별 모형)과 같은 전통적인 기계 학습 모형과 직접적으로 연관되어 있다.(각자 제안된 방식이긴 하지만)
 
+---
+
 ## 1.6.2 Radial Basis Function(RBF) 신경망
 
 요즘은 잊혀진 radial basis function(RBF, 방사상 기저 함수) 신경망은, 특정 종류의 문제에 한해서 상당한 잠재력을 가지고 있다. 이 구조의 한계는 깊이가 부족하다는 점인데, 보통 RBF는 layer가 단 두 개이다.
