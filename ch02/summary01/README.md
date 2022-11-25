@@ -70,9 +70,9 @@ $$ \overline{W} \Leftarrow \overline{W}(1 - \alpha \cdot \lambda) + \alpha (y_i 
 
 이 갱신 공식은 2.2.1의 perceptron criterion과 매우 비슷하다. 그러나 두 갱신 공식은 완전히 같은 것은 아니다.( $\hat{y_i}$ 계산 방식이 다르기 때문)
 
-그렇다면 이진 target에 적용하면 어떨까? 이 경우는 least-squares classification(최소제곱 분류) 문제가 된다. 이 경우 perceptron creterion과 겉보기에 동일한데, 퍼셉트론 알고리즘과 결과가 같지는 않다.
+그렇다면 binary target에 적용하면 어떨까? 이 경우는 least-squares classification(최소제곱 분류) 문제가 된다. 이 경우 perceptron criterion(퍼셉트론 판정 기준)과 겉보기에 동일한데, 퍼셉트론 알고리즘과 결과가 같지는 않다.
 
-그 이유는 least-squares classification의 '실숫값' 훈련 오차 $(y_i - \hat{y_i})$ 와, 퍼셉트론 '정수' 오차 $(y_i - \hat{y_i})$ 의 계산 방식이 완전히 다르기 때문이다.
+그 이유는 least-squares classification의 '실숫값' 훈련 오차 $(y_i - \hat{y_i})$ 와, 퍼셉트론 '정수' 오차 $(y_i - \hat{y_i})$ 의 계산 방식이 완전히 다르기 때문이다. (바로 아래 2.2.2.1절에서 설명)
 
 > 이런 least-squares classification(최소제곱 분류)를 Widrow-Hoff learning(위드로-호프 학습)이라고 한다.
 
@@ -97,5 +97,101 @@ $$ L_i = (y_i - \hat{y_i})^2 = y_i^2(y_i - \hat{y_i})^2 = (1-\hat{y_i}y_i)^2 $$
 - $y_i^2 = 1$ 이므로 loss function에 곱하는 것으로 모양을 바꾼 것이다.
 
 > 위 loss function을 '너무 좋은 성과'에 벌점을 부여하지 않도록 수정하는 한 방법을 적용하면 SVM의 loss function이 된다.
+
+---
+
+### 2.2.3 logistic regression
+
+logistic regression(로지스틱 회귀)는 견본들을 확률에 근거해서 분류하는 하나의 확률 모형이다. 각 훈련 견본의 '정답에 해당할 확률(예측값)'을 최대한 크게 만드는 것이 목표다. 이런 optimization(최적화) 목표는 **maximum-likelihood estimation**(최대가능도 추정)이라는 기법을 이용해서 달성할 수 있다.
+
+output node의 <U>loss function은 음의 **log-likelihood**(로그가능도)</U>이고, Widrow-Hoff의 제곱 오차 대신 이 loss function을 쓰는 것이 바로 logistic regression이다.
+
+> output layer의 activation function으로는 sigmoid를 주로 사용한다.
+
+다음은 logistic regression의 output을 수식으로 표현한 것이다.
+
+$$ \hat{y_i} = P(y_i = 1) = {{1} \over {1 + exp(-\overline{W} \cdot \overline{X_i})}} $$
+
+- input data: $\lbrace (\overline{X_1}, y_1),  (\overline{X_2}, y_2),...,  (\overline{X_n}, y_n) \rbrace$
+
+  - $d$ 차원 feature vector $\overline{X_i}$  와, target인 $y_i \in \lbrace -1, +1 \rbrace$ 으로 구성된 훈련 견본 n개 집합
+
+- weight: $\overline{W} = (w_1, ..., w_d)$
+
+- activation function: sigmoid
+
+여기서 신경망은 $P(y_i = 1) > 0.5$ 인 부류, 즉 해당 예측 확률이 0.5보다 큰 부류를 결과(최종 예측값)으로 출력한다.
+
+> 이때 분모의 범위에 집중하자. 만약 $\overline{W} \cdot \overline{X_i}=0$ 라면 $P(y_i = 1) = 0.5$ 이다. $\overline{W} \cdot \overline{X_i} > 0$ 이면 0.5를 넘게 된다.
+
+> 따라서 사실상 $\overline{W} \cdot \overline{X_i}$ 의 **부호에 따라서 판단하는 것과 다름이 없다.**
+
+양성(positive) 견본에서 예측값 $P(y_i = 1)$ 의 확률은 최대화해야 하며, 음성(negative) 견본에서는 예측값 $P(y_i = -1)$ 의 확률은 최소화해야 한다.
+
+다시 정리하면 다음과 같다.
+
+- $y_i = 1$ 인 (positive) 견본에서는 예측값 $\hat{y_i}$ 를 최대화
+
+- $y_i = -1$ 인 (negative) 견본에서는 예측값 $1- \hat{y_i}$ 을 최대화해야 한다.
+
+이 둘을 통합해서 표현한 수식, 즉 최대화해야 하는 것을 표현하면 바로 다음과 같다.
+
+$$ | {{y_i} \over {2}} - {1 \over 2} + \hat{y_i} | $$
+
+그리고 이 <U>최대화해야 하는 값을 모두 곱한 값을 최대화</U>하면, 결과적으로 가능도 $\mathcal{L}$ 이 최대화된다.
+
+$$ \mathcal{L} = \prod_{i=1}^N | {{y_i} \over {2}} - {1 \over 2} + \hat{y_i} | $$
+
+이제 loss function을 $L_i = -\log(\mathcal{L}) = \sum_{i=1}^{n} {-\log(| {{y_i} \over {2}} - {1 \over 2} + \hat{y_i} |)}$
+
+- 여기서 $i$ 번째 훈련 견본의 loss function을 $L_i = -\log(| {{y_i} \over {2}} - {1 \over 2} + \hat{y_i} |)$ 라고 하면 더 간단히 쓸 수 있다.
+
+- <U>log를 적용하는 것으로 곱이 아닌 sum 계산 형태</U>로 바뀌었다.
+
+확률을 다루는 backpropagation 갱신에서는 이렇게 <U>sum 형태의 loss function이 더 편리</U>하다. 
+
+$i$ 번째 loss function $L_i$ 을 $\overline{W}$ 로 편미분하여 기울기를 구하면 다음과 같다. (여기서 $\overline{W}$ 와 관련이 있는 변수가 $\hat{y_i}$ 인 것을 유의하고 보면 쉽다.)
+
+> ${d \over dx}|f(x)| = (\mathrm{sgn} \, f(x)){d \over dx} f(x) = {|f(x)| \over {f(x)}}{d \over dx} f(x)$ :  modulus(절댓값)이 적용된 $|f(x)|$ 의 미분은 사실상 단순히 $f(x)$ 값의 부호 여부에 따라 +1, -1을 $f'(x)$ 에 곱한 것
+
+> ${d \over dx}[log_{a}(u)] = {1 \over \ln{a}} \cdot {1 \over u}u'$
+
+> ${d \over dx}{1 \over {1+ exp({-x})}} = {-{(-exp(-x))} \over {(1+exp(-x))^2}} = {{1} \over {1+exp(-x)}} \cdot {{exp(-x)} \over {1+exp(-x)}} = f(x)(1-f(x)) $
+
+$$ {\partial{L_i} \over {\partial \overline{W}}} = - {{sgn({{y_i} \over {2}} - {1 \over 2} + \hat{y_i})} \over {|{{y_i} \over {2}} - {1 \over 2} + \hat{y_i}|}} \cdot {{\partial \hat{y_i}} \over {\partial \overline{W}}} $$
+
+$$ = - {{sgn({{y_i} \over {2}} - {1 \over 2} + \hat{y_i})} \over {|{{y_i} \over {2}} - {1 \over 2} + \hat{y_i}|}} \cdot {{\overline{X_i}} \over {1+ exp(- \overline{W} \cdot \overline{X_i})}} \cdot { 1 \over {1+ exp(\overline{W} \cdot \overline{X_i})}} $$
+
+$$ 만일 \, y_i = 1 이면 \quad - {{\overline{X_i}} \over {1+exp({\overline{W} \cdot \overline{X_i}})}} $$
+
+$$ 만일 \, y_i = -1 이면 \quad {{\overline{X_i}} \over {1+exp({-\overline{W} \cdot \overline{X_i}})}} $$
+
+위 식을 $y_i \in \lbrace -1, +1 \rbrace$ 을 이용해 좀 더 간단히 표현하면 다음과 같다.
+
+$$ {\partial{L_i} \over {\partial \overline{W}}} = - {{y_i\overline{X_i}} \over {1+ exp(y_i\overline{W} \cdot \overline{X_i})}} $$
+
+> $-$ \[ $(\overline{X_i}, y_i)$ 를 오분류할 확률 \]( $y_i \overline{X_i}$ ) 
+
+이상에 기초해서 logistic regression의 backpropagation 갱신 공식을 세우면 다음과 같다.
+
+$$ \overline{W} \Leftarrow \overline{W}(1 - \alpha \lambda) + \alpha {{y_i \overline{X_i}} \over {1+exp[y_i (\overline{W} \cdot \overline{X_i})]}} $$
+
+여기서 기억해 둘 관점은 다음과 같다.
+
+- perceptron, Widrow-Hoff algorithm: 'mistake(착오)의 magnitude(크기)'를 이용해서 갱신
+
+- logistic regression: 'mistake **확률**'을 이용해서 갱신
+
+---
+
+### 2.2.3.1 다른 종류의 activation function과 loss function을 이용한 구현
+
+사실 다른 종류의 activation function과 loss function을 이용해서도 logistic regression model을 만들 수 있다.
+
+가령 identity function을 이용해서 출력 $\hat{y_i} \in (- \infty, +\infty)$ 를 얻고, 거기에 다음과 같은 loss function을 적용할 수도 있다.
+
+$$ L_i = \log (1+ exp(-y_i \cdot \hat{y_i})) $$
+
+이 model에서 최종 예측값(output)은 $y_i$ 에 sign function(부호 함수)를 적용한 것이다. 
 
 ---
