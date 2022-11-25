@@ -294,9 +294,9 @@ perceptron의 기본 구조를 조금만 변경해도 model을 만들 수 있다
 
 이런 multiclass perceptron의 $i$ 번째 훈련 견본의 loss function은 다음과 같이 정의된다.
 
-$$ L_i = \max{}_{r:r \neq y_i} \lbrace 0, \max(\overline{W_r} \cdot \overline{X}_{i} - \overline{W_{y_i}} \cdot \overline{X}_{i}) \rbrace $$
+$$ L_i = \max{}_{r:r \neq y_i} \lbrace 0, \max(\overline{W_r} \cdot \overline{X_i} - \overline{W_{y_i}} \cdot \overline{X_i}) \rbrace $$
 
-- dot product이므로 $\max(\overline{W_r} \cdot \overline{X}_{i} - \overline{W_{y_i}} \cdot \overline{X}_{i}) = \max \lbrace (\overline{W_r} - \overline{W_{y_i}}) \cdot \overline{X}_{i} \rbrace$ 로 쓸 수도 있다.
+- dot product이므로 $\max(\overline{W_r} \cdot \overline{X_i} - \overline{W_{y_i}} \cdot \overline{X_i}) = \max \lbrace (\overline{W_r} - \overline{W_{y_i}}) \cdot \overline{X_i} \rbrace$ 로 쓸 수도 있다.
 
 요점은 다음과 같다.
 
@@ -306,7 +306,7 @@ $$ L_i = \max{}_{r:r \neq y_i} \lbrace 0, \max(\overline{W_r} \cdot \overline{X}
 
   - correct-class vector를 다음과 같이 갱신: $\overline{W_{y_i}} \Leftarrow \overline{W_{y_i}} + \alpha\overline{X_i}$
 
-  - wrong-class vector를 다음과 같이 갱신: $\overline{W}_{\hat{y_i}} \Leftarrow \overline{W}_{\hat{y_i}} - \alpha\overline{X_i}$
+  - wrong-class vector를 다음과 같이 갱신: $\overline{W_{\hat{y_i}}} \Leftarrow \overline{W_{\hat{y_i}}} - \alpha\overline{X_i}$
 
 따라서 data마다 항상 모든 node의 weight가 갱신되는 것이 아니라, <U>해당하는 두 개만 갱신</U>된다.
 
@@ -322,7 +322,7 @@ Weston-Watkins(웨스턴-왓킨스) SVM은 위 multiclass perceptron에서 다�
 
 Weston-Watkins SVM의 $i$ 번째 훈련 견본의 loss function은 다음과 같다.
 
-$$ L_i = \sum_{r:r \neq y_i} \max(0, \overline{W_r} \cdot \overline{X}_{i} - \overline{W_{y_i}} \cdot \overline{X}_{i} + 1) $$
+$$ L_i = \sum_{r:r \neq y_i} \max(0, \overline{W_r} \cdot \overline{X_i} - \overline{W_{y_i}} \cdot \overline{X_i} + 1) $$
 
 1을 더해주면서 $\overline{W_{y_i}}$ 와 <U>margin이 1이 안 되게 true class로 가깝게 분류하는 $\overline{W_r}$ 도 고려</U>를 하게 바뀌었다. 또한 합을 계산하는 형태라서 <U>true class보다 견본에 더 적합하게 예측하는 모든 weights을 고려</U>한다.
 
@@ -332,15 +332,15 @@ $$ L_i = \sum_{r:r \neq y_i} \max(0, \overline{W_r} \cdot \overline{X}_{i} - \ov
 
 - 위 조건에 해당하지 않는다면 다음 갱신을 진행한다. regularization을 포함한 갱신이다.( $\alpha$ 는 learning rate )
 
-  > $\overline{W}_r$ 이 loss function에 양의 값을 기여하면 1을 반환하는 0/1 indicator function을 $\delta(r, \overline{X_i})$ 라고 표기하자.
+  > $\overline{W_r}$ 이 loss function에 양의 값을 기여하면 1을 반환하는 0/1 indicator function을 $\delta(r, \overline{X_i})$ 라고 표기하자.
 
   - correct-class vector 갱신: $\overline{W_{y_i}} \Leftarrow \overline{W_{y_i}}(1 - \alpha \lambda) + \alpha\overline{X_i}[\sum_{j \neq r}{\delta(j,\overline{X_i})}]$
 
-  - wrong-class vector 갱신: $\overline{W}_{\hat{y_i}} \Leftarrow \overline{W}_{\hat{y_i}}(1 - \alpha \lambda) - \alpha\overline{X_i}[{\delta(r,\overline{X_i})}]$
+  - wrong-class vector 갱신: $\overline{W_{\hat{y_i}}} \Leftarrow \overline{W_{\hat{y_i}}}(1 - \alpha \lambda) - \alpha\overline{X_i}[{\delta(r,\overline{X_i})}]$
 
-여기서 $\overline{W}_r$ 이 loss function에 양의 값을 기여한다는 말은 즉, true class의 $\overline{W_{y_i}}$ 보다 더 적합하다고 예측하는 $\overline{W}_r$ 이 있다는 뜻이다.
+여기서 $\overline{W_r}$ 이 loss function에 양의 값을 기여한다는 말은 즉, true class의 $\overline{W_{y_i}}$ 보다 더 적합하다고 예측하는 $\overline{W_r}$ 이 있다는 뜻이다.
 
-correct-class vector는 더 적합하다고 예측하는 $\overline{W}_r$ 이 적을수록 더 크게 갱신하게 되고, wrong-class vector는 더 적합하게 예측하는 $\overline{W}_r$ 의 존재 여부에 따라 갱신하게 된다.
+correct-class vector는 더 적합하다고 예측하는 $\overline{W_r}$ 이 적을수록 더 크게 갱신하게 되고, wrong-class vector는 더 적합하게 예측하는 $\overline{W_r}$ 의 존재 여부에 따라 갱신하게 된다.
 
 > SVM이 제대로 작동하려면 이런 regularization이 반드시 필요하므로, regularization을 고려한 식으로 기억하자.
 
@@ -356,7 +356,7 @@ multinomial logistic regression(다항 로지스틱 회귀) = softmax regression
 
 이런 사후확률을 softmax를 사용하여 추정할 수 있다. 이런 방식으로 class에 해당하는 membership(소속도)를 확률값으로 예측한다.
 
-$$ P(r|\overline{X_i}) = {{\exp(\overline{W}_r \cdot \overline{X_i})} \over {\sum_{j=1}^{k}\exp(\overline{W}_j \cdot \overline{X_i})}} $$
+$$ P(r|\overline{X_i}) = {{\exp(\overline{W_r} \cdot \overline{X_i})} \over {\sum_{j=1}^{k}\exp(\overline{W}_j \cdot \overline{X_i})}} $$
 
 이 softmax regression의 $i$ 번째 훈련 견본의 loss function은 다음과 같다.
 
@@ -364,13 +364,13 @@ $$ L_i = - \log[P(y_i|\overline{X_i})] $$
 
 $$ = - \overline{W_{y_i}} \cdot \overline{X_i} + \log[\sum_{j=1}^{k} \exp (\overline{W}_j \cdot \overline{X_i})] $$
 
-- softmax 활성화 전 값을 $v_r = \overline{W}_r \cdot \overline{X_i}$ 로 표현하면 더 간단히 나타낼 수 있다.
+- softmax 활성화 전 값을 $v_r = \overline{W_r} \cdot \overline{X_i}$ 로 표현하면 더 간단히 나타낼 수 있다.
 
 $$ = - v_{y_i} + \log[\sum_{j=1}^{k} \exp (v_j)] $$
 
 softmax regression 역시 예측값 $\hat{y_i}$ 가 올바른 class에 해당하는지에 따라 갱신을 다르게 적용한다.
 
-> backpropagation을 위해 chain rule을 이용한다. ${{\partial L_i} \over {\partial \overline{W}_r}} = {{\partial L_i} \over {\partial v_r}} \cdot {{\partial v_r} \over {\partial \overline{W}_r}} = {{\partial L_i} \over {\partial v_r}} \cdot \overline{X_i}$
+> backpropagation을 위해 chain rule을 이용한다. ${{\partial L_i} \over {\partial \overline{W_r}}} = {{\partial L_i} \over {\partial v_r}} \cdot {{\partial v_r} \over {\partial \overline{W_r}}} = {{\partial L_i} \over {\partial v_r}} \cdot \overline{X_i}$
 
 - 예측값 $\hat{y_i}$ 가 올바른 class에 해당하면 다음과 같이 갱신한다.
 
@@ -378,9 +378,9 @@ $$ \overline{W_{y_i}} \Leftarrow \overline{W_{y_i}}(1 - \alpha \lambda) + \alpha
 
 - 예측값 $\hat{y_i}$ 가 다른 class에 해당하면( $y_i \neq \hat{y_i}$ ), 다음과 같이 갱신한다.
 
-$$ \overline{W}_{\hat{y_i}} \Leftarrow \overline{W}_{\hat{y_i}}(1 - \alpha \lambda) - \alpha\overline{X_i} \cdot P(\hat{y_i}|\overline{X_i}) $$
+$$ \overline{W_{\hat{y_i}}} \Leftarrow \overline{W_{\hat{y_i}}}(1 - \alpha \lambda) - \alpha\overline{X_i} \cdot P(\hat{y_i}|\overline{X_i}) $$
 
-즉 예측값 $\hat{y_i}$ 가 큰 확률로 올바른 class로 예측할수록 $\overline{W_{y_i}}$ 는 조금만 커지도록 갱신된다. 반면 예측값 $\hat{y_i}$ 가 다른 class에 큰 확률로 해당한다고 예측할수록 $\overline{W}_{\hat{y_i}}$ 는 크게 작아지도록 갱신된다.
+즉 예측값 $\hat{y_i}$ 가 큰 확률로 올바른 class로 예측할수록 $\overline{W_{y_i}}$ 는 조금만 커지도록 갱신된다. 반면 예측값 $\hat{y_i}$ 가 다른 class에 큰 확률로 해당한다고 예측할수록 $\overline{W_{\hat{y_i}}}$ 는 크게 작아지도록 갱신된다.
 
 softmax regression은 multiclass perceptron이나 Weston-Watkins SVM과 달리, <U>각 훈련 견본마다 $k$ 개의 seperator $\overline{W}_1,...,\overline{W}_k$ 를 모두 갱신</U>한다.
 
