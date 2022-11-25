@@ -265,3 +265,147 @@ perceptron은 갱신 수행을 결정하는 조건이 $y_i\hat{y_i} < 0$ 이었�
 - SVM은 <U>알맞게 분류는 됐으나 확신이 그리 높지 않은 point에서도 갱신</U>을 수행한다.
 
 ---
+
+## 2.3 multiclass classification model을 위한 신경망 구조
+
+![multiclass](images/multiclass.png)
+
+![multicalss classification model](images/multiclass_classification.png)
+
+> 위 그림은 class 2가 우리가 원하는 class(true)라고 가정한다. 가령 class 1은 강아지, 2는 고양이, 3은 자동차인 경우이다.
+
+perceptron의 기본 구조를 조금만 변경해도 model을 만들 수 있다.
+
+### 2.3.1 multiclass perceptron
+
+견본이 속할 수 있는 class가 $k$ 개인 다부류(multiclass) 상황을 가정하자.
+
+- 훈련 견본: $(\overline{X}_1, y_1), ... ,(\overline{X}_i, y_D)$
+ 
+  - $d$ 차원 feature vector $\overline{X}_i$
+
+  - class index $y \in \lbrace 1, ..., k \rbrace$
+
+- 목표
+
+  - $i$ 번째 훈련 견본의 $\overline{W}_{y_i} \cdot \overline{X}_i$ 이, $r \neq y_i$ 인 $\overline{W}_{r} \cdot \overline{X}_i$ 보다 커야 한다. 
+  
+  - 이 조건을 만족하는 $k$ 개의 서로 다른 linear separator(선형 분리자) $\overline{W}_1,...,\overline{W}_k$ 를 동시에 만족한다면 제대로 된 classification이 가능하다.
+
+이런 multiclass perceptron의 $i$ 번째 훈련 견본의 loss function은 다음과 같이 정의된다.
+
+$$ L_i = \max{}_{r:r \neq y_i} \lbrace 0, \max(\overline{W}_{r} \cdot \overline{X}_{i} - \overline{W}_{y_i} \cdot \overline{X}_{i}) \rbrace $$
+
+- dot product이므로 $\max(\overline{W}_{r} \cdot \overline{X}_{i} - \overline{W}_{y_i} \cdot \overline{X}_{i}) = \max \lbrace (\overline{W}_{r} - \overline{W}_{y_i}) \cdot \overline{X}_{i} \rbrace$ 로 쓸 수도 있다.
+
+요점은 다음과 같다.
+
+- 예측값 $\hat{y_i}$ 가 올바른 class에 해당하면( $y_i = \hat{y_i}$ ), 갱신은 일어나지 않는다.
+
+- 예측값 $\hat{y_i}$ 가 다른 class에 해당하면( $y_i \neq \hat{y_i}$ ), 두 가지 갱신을 진행한다.( $\alpha$ 는 learning rate )
+
+  - correct-class vector를 다음과 같이 갱신: $\overline{W}_{y_i} \Leftarrow \overline{W}_{y_i} + \alpha\overline{X}_i$
+
+  - wrong-class vector를 다음과 같이 갱신: $\overline{W}_{\hat{y_i}} \Leftarrow \overline{W}_{\hat{y_i}} - \alpha\overline{X}_i$
+
+따라서 data마다 항상 모든 node의 weight가 갱신되는 것이 아니라, <U>해당하는 두 개만 갱신</U>된다.
+
+---
+
+### 2.3.2 Weston-Watkins SVM
+
+Weston-Watkins(웨스턴-왓킨스) SVM은 위 multiclass perceptron에서 다음 두 가지를 수정한 형태다.
+
+1. multiclass perceptron이 true와 wrong에 해당되는 두 weights만 갱신하지만, Weston-Watkins SVM은 true class보다 견본에 더 적합하다고 예측된 **임의의** class weights들을 갱신한다.
+
+2. Weston-Watkins SVM은 오분류된 class의 weights을 갱신하면서, 또한 true class에 너무 가까운 class의 weight도 갱신한다. 이는 margin 개념을 이용한다.
+
+Weston-Watkins SVM의 $i$ 번째 훈련 견본의 loss function은 다음과 같다.
+
+$$ L_i = \sum_{r:r \neq y_i} \max(0, \overline{W}_{r} \cdot \overline{X}_{i} - \overline{W}_{y_i} \cdot \overline{X}_{i} + 1) $$
+
+1을 더해주면서 $\overline{W}_{y_i}$ 와 <U>margin이 1이 안 되게 true class로 가깝게 분류하는 $\overline{W}_{r}$ 도 고려</U>를 하게 바뀌었다. 또한 합을 계산하는 형태라서 <U>true class보다 견본에 더 적합하게 예측하는 모든 weights을 고려</U>한다.
+
+갱신을 고려해야 하는 부분은 다음과 같이 정리할 수 있다.
+
+- 예측값 $\hat{y_i}$ 가 올바른 class에 해당하고( $y_i = \hat{y_i}$ ) $\overline{W}_{y_i}$ 가 이를 가장 잘 분류하며, 그 다음으로 $y_i$ 에 적합하다고 예측된 class가 충분한 margin을 가지고 있다면 갱신은 일어나지 않는다.
+
+- 위 조건에 해당하지 않는다면 다음 갱신을 진행한다. regularization을 포함한 갱신이다.( $\alpha$ 는 learning rate )
+
+  > $\overline{W}_r$ 이 loss function에 양의 값을 기여하면 1을 반환하는 0/1 indicator function을 $\delta(r, \overline{X}_i)$ 라고 표기하자.
+
+  - correct-class vector 갱신: $\overline{W}_{y_i} \Leftarrow \overline{W}_{y_i}(1 - \alpha \lambda) + \alpha\overline{X}_i[\sum_{j \neq r}{\delta(j,\overline{X}_i)}]$
+
+  - wrong-class vector 갱신: $\overline{W}_{\hat{y_i}} \Leftarrow \overline{W}_{\hat{y_i}}(1 - \alpha \lambda) - \alpha\overline{X}_i[{\delta(r,\overline{X}_i)}]$
+
+여기서 $\overline{W}_r$ 이 loss function에 양의 값을 기여한다는 말은 즉, true class의 $\overline{W}_{y_i}$ 보다 더 적합하다고 예측하는 $\overline{W}_r$ 이 있다는 뜻이다.
+
+correct-class vector는 더 적합하다고 예측하는 $\overline{W}_r$ 이 적을수록 더 크게 갱신하게 되고, wrong-class vector는 더 적합하게 예측하는 $\overline{W}_r$ 의 존재 여부에 따라 갱신하게 된다.
+
+> SVM이 제대로 작동하려면 이런 regularization이 반드시 필요하므로, regularization을 고려한 식으로 기억하자.
+
+---
+
+### 2.3.3 multinomial logistic regression(softmax regression)
+
+multinomial logistic regression(다항 로지스틱 회귀) = softmax regression도 위 Weston-Watkins SVM 사례처럼 logistic regression을 multinomial한 방식으로 일반화한 것이다.
+
+그러나 이전 perceptron과 SVM과 다른 점은, 가능도를 posteriori probability(사후확률) $P(r|\overline{X}_i)$ 로 고려한다는 점이다. 
+
+> 사후확률 $P(A|B)$ 는 관측 B를 보고 원인이 A라고 생각되는 확률이다.
+
+이런 사후확률을 softmax를 사용하여 추정할 수 있다. 이런 방식으로 class에 해당하는 membership(소속도)를 확률값으로 예측한다.
+
+$$ P(r|\overline{X}_i) = {{\exp(\overline{W}_r \cdot \overline{X}_i)} \over {\sum_{j=1}^{k}\exp(\overline{W}_j \cdot \overline{X}_i)}} $$
+
+이 softmax regression의 $i$ 번째 훈련 견본의 loss function은 다음과 같다.
+
+$$ L_i = - \log[P(y_i|\overline{X}_i)] $$
+
+$$ = - \overline{W}_{y_i} \cdot \overline{X}_i + \log[\sum_{j=1}^{k} \exp (\overline{W}_j \cdot \overline{X}_i)] $$
+
+- softmax 활성화 전 값을 $v_r = \overline{W}_r \cdot \overline{X}_i$ 로 표현하면 더 간단히 나타낼 수 있다.
+
+$$ = - v_{y_i} + \log[\sum_{j=1}^{k} \exp (v_j)] $$
+
+softmax regression 역시 예측값 $\hat{y_i}$ 가 올바른 class에 해당하는지에 따라 갱신을 다르게 적용한다.
+
+> backpropagation을 위해 chain rule을 이용한다. ${{\partial L_i} \over {\partial \overline{W}_r}} = {{\partial L_i} \over {\partial v_r}} \cdot {{\partial v_r} \over {\partial \overline{W}_r}} = {{\partial L_i} \over {\partial v_r}} \cdot \overline{X}_i$
+
+- 예측값 $\hat{y_i}$ 가 올바른 class에 해당하면 다음과 같이 갱신한다.
+
+$$ \overline{W}_{y_i} \Leftarrow \overline{W}_{y_i}(1 - \alpha \lambda) + \alpha\overline{X}_i \cdot (1 - P(y_i|\overline{X}_i)) $$
+
+- 예측값 $\hat{y_i}$ 가 다른 class에 해당하면( $y_i \neq \hat{y_i}$ ), 다음과 같이 갱신한다.
+
+$$ \overline{W}_{\hat{y_i}} \Leftarrow \overline{W}_{\hat{y_i}}(1 - \alpha \lambda) - \alpha\overline{X}_i \cdot P(\hat{y_i}|\overline{X}_i) $$
+
+즉 예측값 $\hat{y_i}$ 가 큰 확률로 올바른 class로 예측할수록 $\overline{W}_{y_i}$ 는 조금만 커지도록 갱신된다. 반면 예측값 $\hat{y_i}$ 가 다른 class에 큰 확률로 해당한다고 예측할수록 $\overline{W}_{\hat{y_i}}$ 는 크게 작아지도록 갱신된다.
+
+softmax regression은 multiclass perceptron이나 Weston-Watkins SVM과 달리, <U>각 훈련 견본마다 $k$ 개의 seperator $\overline{W}_1,...,\overline{W}_k$ 를 모두 갱신</U>한다.
+
+---
+
+### 2.3.4 hierarchical softmax
+
+만약 class가 굉장히 많다면, softmax regression은 매번 seperator를 갱신해야 하기 때문에 학습이 매우 느려질 것이다. 
+
+> 주로 text mining과 같이 target word를 예측하는 과제가 이런 경우에 해당한다.
+
+이런 문제를 hierarchical softmax(위계적 소프트맥스)를 이용하여 학습 속도를 높일 수 있다. 이 방법의 핵심은 class들을 hierarchical하게 묶어서 binary tree와 비슷한 계통 구조를 만드는 것에 있다.
+
+![binary tree for hierarchical softmax](images/binary_tree_hierarchical_softmax.jpeg)
+
+> 분모를 다 더하지 않고 확률을 구해보려는 아이디어라는 관점에서 보자.
+
+가령 위 그림처럼 $w_4$ 라는 단어의 주변부 단어가 $w_2$ 라는 단어이고, 이 둘의 관계 정도를 나타내는 확률값을 만들고 싶다고 하자. 
+
+tree 구조의 root node(뿌리 노드)에서 terminal node(말단 노드, leaf node)까지 $\log_{2}(k)$ 회 이진 분류를 수행해서 $k$ 중 분류 결과를 얻는다.(말단에 각 단어들이 위치하게 된다.)
+
+그리고 terminal node까지 가면서 만나는 node와 연산을 수행하면서, 최종적으로 도출하는 확률값을 사용하게 된다.
+
+그렇다면 class를 어떻게 hierarchical하게 묶을 수 있을까? 한 가지 접근 방식으로 그냥 random하게 tree 구조를 생성하는 것이다. class가 비슷한 class까지 묶였다면 성능이 향상될 것이다. 또한 Huffman encoding(허프먼 부호화)를 이용해서 binary tree를 만드는 방법도 있다.
+
+> 예를 들어 target word 예측은 WordNet 계통구조에 따라 class를 묶으면 도움이 된다.(다만 binary tree 구조가 아니므로 추가적인 재조직화는 필요하다.)
+
+---

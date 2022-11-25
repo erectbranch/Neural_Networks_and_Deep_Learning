@@ -36,6 +36,12 @@
 
   > [여러 신경망 구조 소개](https://github.com/erectbranch/Neural_Networks_and_Deep_Learning/tree/master/ch01/summary03): 통상적이지 않은 신경망 구조, 특이한 연산, sum-product network, 흔히 쓰이는 신경망 - RBF / RBM / RNN / CNN, transfer learning
 
+### 얕은 신경망을 이용한 기계학습
+
+- **이진/다중 분류 모형**
+
+  > [신경망을 이용한 모형과 여러 분류 모형 비교](https://github.com/erectbranch/Neural_Networks_and_Deep_Learning/tree/master/ch02/summary01): binary classification - perceptron(smoothed surrogate) / Widrow-Hoff / logistic regression / SVM, multiclass classification - multiclass perceptron / Weston-Watkins SVM / softmax regression / hierarchical softmax
+
 <br/>
 
 ## :mag: 목차
