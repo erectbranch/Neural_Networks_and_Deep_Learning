@@ -40,7 +40,7 @@
 
 - **이진/다중 분류 모형**
 
-  > [신경망을 이용한 모형과 여러 분류 모형 비교](https://github.com/erectbranch/Neural_Networks_and_Deep_Learning/tree/master/ch02/summary01): binary classification - perceptron(smoothed surrogate) / Widrow-Hoff / logistic regression / SVM, multiclass classification - multiclass perceptron / Weston-Watkins SVM / softmax regression / hierarchical softmax
+  > [이진/다중 분류 - 신경망과 여러 모델 비교](https://github.com/erectbranch/Neural_Networks_and_Deep_Learning/tree/master/ch02/summary01): 이진 분류 - perceptron(smoothed surrogate) / Widrow-Hoff / logistic regression / SVM, 다중 분류 - multiclass perceptron / Weston-Watkins SVM / softmax regression / hierarchical softmax
 
 <br/>
 
