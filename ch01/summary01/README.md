@@ -596,7 +596,7 @@ $$ {\bar{o}} = \Phi (W_{k+1}^{T}\bar{h}_k) $$
 
 이외에도 overfitting을 막기 위해서 다수의 연결을 제거하거나 공유하는 등 완전 연결에서 벗어난 구조가 더 좋은 성과를 내기도 한다. 가중치 제거 및 공유의 전형적인 예로는 **CNN**(Convolution Neural Network, 합성곱 신경망)이 구조가 대표적이다. 
 
-> overfitting이 일어나면 train data에 대해서는 모델이 잘 작동하지만, test data에 대해서는 잘 **Regularization**(일반화)되지 않는다. 
+> overfitting이 일어나면 train data에 대해서는 모델이 잘 작동하지만, test data에 대해서는 잘 **generalizaion**(일반화)되지 않는다. 
 
 > generalization: 조금 손실이 발생하더라도 새로운 데이터에 대해 올바른 예측을 수행하는 능력. 모델을 단순화시켜 새로운 데이터에 대한 에측성을 높이는 방법을 의미한다.
 
