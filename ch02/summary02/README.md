@@ -29,11 +29,11 @@ multiclass classification 신경망이 $k$ 개의 출력 점수 $o_1,...,o_k$ �
 
 ## 2.5 autoencoder를 이용한 행렬 인수분해
 
-**autoencoder**(자동부호기)는 matrix decomposition(행렬 인수분해), PCA(주성분 분석), dimension reduction(차원 축소) 같은 다양한 supervised learning 과제에 쓰인다
+**autoencoder**(자동부호기)는 matrix factorization(행렬 인수분해), PCA(주성분 분석), dimension reduction(차원 축소) 같은 다양한 supervised learning 과제에 쓰인다
 
-또한 autoencoder를 변형해서 불완전한 자료의 matrix decomposition도 수행할 수 있다. (대체로 추천 시스템을 구축할 때 이런 기법이 쓰인다.) 더 나아가서 NLP(자연어 처리) 분야의 몇몇 방법도 autoencoder의 변형으로 볼 수 있다.
+또한 autoencoder를 변형해서 불완전한 자료의 matrix factorization도 수행할 수 있다. (대체로 추천 시스템을 구축할 때 이런 기법이 쓰인다.) 더 나아가서 NLP(자연어 처리) 분야의 몇몇 방법도 autoencoder의 변형으로 볼 수 있다.
 
-> 단어-문맥 행렬의 non-linear matrix decomposition을 수행하는 word2vec이 바로 이런 예다.
+> 단어-문맥 행렬의 non-linear matrix factorization을 수행하는 word2vec이 바로 이런 예다.
 
 이런 model들의 non-linearity는 output layer의 activation function이 제공한다. 
 
@@ -77,7 +77,7 @@ $M$ 층 autoencoder에서 input과 output 사이의 layer들이 대층 구조를
 
 ### 2.5.1.1 hidden layer가 1개인 autoencoder
 
-$n \times d$ 차원 행렬 $D$ 를 다음과 같이 두 행렬 $U, V$ 로 matrix decomposition할 것이다.
+$n \times d$ 차원 행렬 $D$ 를 다음과 같이 두 행렬 $U, V$ 로 matrix factorization할 것이다.
 
 $$ D \approx UV^{T} $$
 
@@ -91,7 +91,7 @@ $$ D \approx UV^{T} $$
 
 여기서 $k$ 를 인수분해의 rank(계수)라고 부른다. 행렬 $U$ 는 <U>자료의 축소된 표현</U>을 담으며, 행렬 $V$ 는 <U>basis vector(기저 벡터)</U>들을 담는다. 
 
-전통적인 기계 학습에서는 이런 문제를 **residual matrix**(잔차 행렬) $(D-UV^{\mathbf{T}})$ 를 $L_2 \, norm$ 으로 최소화하는 것으로 풀어낸다. 다시 말해 matrix decomposition을 다음과 같은 objective function의 optimization으로 볼 수 있다.
+전통적인 기계 학습에서는 이런 문제를 **residual matrix**(잔차 행렬) $(D-UV^{\mathbf{T}})$ 를 $L_2 \, norm$ 최소화로 풀어낸다. 다시 말해 matrix factorization을 다음과 같은 objective function의 optimization으로 볼 수 있다.
 
 $$ J = {||D-UV^{\mathbf{T}}||}^{2}_{F} $$
 
@@ -133,7 +133,7 @@ $$ W = (V^{\mathbf{T}}V)^{-1}V^{\mathbf{T}} $$
 
 > 물론 autoencoder가 도출한 해가 반드시 이 조건을 만족한다는 보장은 없다. 잘못 풀었거나, 행렬 $D$ 의 계수가 full rank가 아닌 경우이다.
 
-pseudo inverse matrix 정의에 따라, 행렬 $W, V$ 는 다음을 만족한다.
+pseudo inverse matrix라면 행렬 $W, V$ 는 다음 조건을 만족한다.
 
 - $WV = I$ 
 
@@ -159,7 +159,7 @@ $$ DW^{\mathbf{T}} \approx U(V^{T}W^{\mathbf{T}}) = U $$
 
 앞서 살핀 내용대로 단층 autoencoder는 SVD와 밀접한 연관이 있다.(loss function도 동일했다.)
 
-SVD는 $V$ 의 열들이 orthonormal(정규직교)라는 조건을 만족하는 matrix decomposition $UV^{T}$ 를 구한다. 
+SVD는 $V$ 의 열들이 orthonormal(정규직교)라는 조건을 만족하는 matrix factorization $UV^{T}$ 를 구한다. 
 
 단층 autoencoder에서도 훈련에서 얻을 수 있는 최적해 중 하나로 '열들이 orthonormal한 $V$ '가 있었다. 
 
@@ -205,9 +205,83 @@ $$ W = V^{T} $$
 
 ---
 
-### 2.5.1.4 그 밖의 matrix decomposition 방법들
+### 2.5.1.4 그 밖의 matrix factorization 방법들
 
-간단한 3 layer autoencoder를 조금 변형해서, 음이 아닌 matrix decomposition, PLSA(Probabilistic Latent Semantic Analysis, 확률적 잠재 의미 분석), 로그(로지스틱) 행렬 인수분해 같은 여러 방법을 흉내 낼 수 있다.
+간단한 3 layer autoencoder를 조금 변형해서, 음이 아닌 matrix factorization, PLSA(Probabilistic Latent Semantic Analysis, 확률적 잠재 의미 분석), logistic matrix factorization(로지스틱 행렬 인수분해) 같은 여러 방법을 흉내 낼 수 있다.
 
 ---
+
+### 2.5.2 non-linear activation function
+
+사실 autoencoder로 SVM을 정확하게 흉내 낼 수 있다는 점 자체는 그리 대단한 일은 아닐 것이다. autoencoder의 진면목은 non-linear activation과 다수의 layer를 사용할 때 나타난다.
+
+예를 들어 행렬 $D$ 가 binary 성분들을 담고 있다고 하자. 앞서 본 autoencoder를 그대로 적용할 수도 있겠지만, 마지막 layer에서 sigmoid activation function을 적용해서 output을 예측할 수도 있다. model은 다음과 같은 이진 행렬 $B=[b_{ij}]$ 를 산출한다.
+
+$$ B \sim sigmoid(UV^T) $$ 
+
+- $\approx$ 대신 $\sim$ 을 사용한 이유: 이진 행렬 $B$ 가 $sigmoid(UV^T)$ 에 담긴 매개변수들을 가진 베르누이 분포에서 무작위로 추출한 하나의 표본임을 의미.
+
+- 여기서 sigmoid는 인수로 주어진 행렬에 성분별로 적용된다.
+
+이렇게 autoencoder로 수행하는 matrix factorization(decomposition)은 **logistic matrix factorization**(로지스틱 행렬 인수분해)와 동일하다. 
+
+> 두 model 모두 $UV^{T}$ 의 $(i,j)$ 번째 성분이 베르누이 분포의 한 매개변수이면서, output의 이진 성분 $b_{ij}$ 가 그러한 매개변수를 가진 베르누이 분포에서 추출된 것인 점을 생각해 보자.
+
+마찬가지로 autoencoder는 이러한 generative model(생성 모형)의 log-likelihood(로그가능도) loss function으로 행렬 $U, V$ 를 학습한다.
+
+---
+
+### <span style='background-color: #393E46; color: #F7F7F7'>&nbsp;&nbsp;&nbsp;🔒 정의: logistic matrix factorization&nbsp;&nbsp;&nbsp;</span>
+
+> logistic matrix factorization은 kernel matrix factorization의 일종이다.
+
+logistic matrix factorization은 implicit feedback을 이용한 Collaborating Filtering(비슷한 사람들끼리는 비슷한 상품을 좋아할 것이라는 가정 하에, 유저의 과거 행동을 이용해서 미래의 행동을 예측) 방법 중 하나이다.
+
+> [spotify에서 발표한 논문](https://web.stanford.edu/~rezab/nips2014workshop/submits/logmat.pdf)이다.
+
+> implicit feedback(암묵적 피드백), 가령 클릭 수, 조회수, 미디어 재생 횟수 등 직접 rating되지 않은 implicit한 값으로 사용자들의 선호도를 예측하는 데 유용하다.(주로 추천 시스템에서 사용)
+
+먼저 다음은 사용하는 데이터들이다.
+
+- $R = (r_{ui})_{n \times m}$ : 사용자가 음악 $i$ 와 interection한 정도(클릭 수, 스트리밍 수 등) ( $r_{ui} \ge 0$ 으로 non-negative하다. )
+
+- $U = (u_1, ..., u_n)$ : 사용자 $n$ 명
+
+- $I = (i_1, ..., i_m)$ : 음악 $m$ 개
+
+가령 $r_{ui} = 0$ 은 사용자 $u$ 가 음악 $i$ 와 interection이 없다는 의미다. 하지만 <U>'interection이 없다 $\neq$ 해당 음악을 선호하지 않는다'</U>는 점을 주의해야 한다. 또한 수치가 크다고 해서 반드시 사용자가 선호한다는 보장도 없기 때문에 model 구성에 신경을 써야 한다.
+
+> 이때 $r_{ui} = 0$ 인 경우를 negative feedback, 0이 아닌 경우를 positive feedback으로 한다.
+
+즉, $r_{ui}$ 가 얼마나 선호도랑 관련이 깊은 interection인지를 파악하는 것이 목표다. 이런 신뢰도 confidence를 다음과 같이 정의한다.
+
+$$ c_{ui} := \alpha r_{ui} $$
+
+- $\alpha$ : tuning parameter(튜닝 패러미터)로 positive, negative에 따라 confidence의 크기를 조절한다.
+
+다음과 같이 posteriori probability(사후확률)로 사용자가 음악을 선호할 확률을 표현할 수 있다.
+
+$$ p(l_{ui}|\bar{x}_u, \bar{y}_i, \beta_u, \beta_i) = {{\exp(\bar{x}_u\bar{y}_i^{T} + \beta_u + \beta_i)} \over {1+ {\exp(\bar{x}_u\bar{y}_i^{T} + \beta_u + \beta_i)}}} $$
+
+- $l_{ui}$ : 사용자 $u$ 가 음악 $i$ 를 선호하는지 여부를 나타내는 변수 
+
+  - 1이면 선호, 0이면 선호하지 않는다.
+
+- $\bar{x}, \bar{y}$ : user-item matrix $R$ ( $n \times m$ )을 latent vector $\bar{x}$ ( $1 \times n$ ), latent vector $\bar{y}$ ( $1 \times m $ )으로 matrix factorization한 결과
+
+- $\beta_u$ : 사용자 $u$ bias
+
+   - 사람에 따라 음악 성향이 다른 점을 반영하기 위한 bias
+
+- $\beta_i$ : 사용자 $i$ bias
+
+   - 음악마다 지명도나 인기가 다른 점을 반영하기 위한 bias
+
+---
+
+logistic matrix factorization과 SVD는 접근 방식이 매우 다르지만, 신경망 설계면에서 보면 model의 차이는 비교적 작다.(사실상 마지막 layer만 변경하면 된다.) 이런 점이 신경망으로 다양한 model 실험을 가능하게 만든다. 정교한 기계 학습 알고리즘을 발견하게 될 때가 많은 것도 이러한 장점 덕분이다.
+
+> 실제로 word2vec의 변형 중 하나로 logistic matrix factorization을 사용하기도 한다.
+
+또한 이런 접근 방식으로 성분이 [0, 1] 실숫값을 갖는 행렬을 factorization하는 것도 가능하다. 소수를 적절하게 다룰 수 있도록 loss function을 수정하면 된다.
 
