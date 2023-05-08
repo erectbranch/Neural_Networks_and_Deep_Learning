@@ -42,6 +42,12 @@
 
   > [이진/다중 분류 - 신경망과 여러 모델 비교](https://github.com/erectbranch/Neural_Networks_and_Deep_Learning/tree/master/ch02/summary01): 이진 분류 - perceptron(smoothed surrogate) / Widrow-Hoff / logistic regression / SVM, 다중 분류 - multiclass perceptron / Weston-Watkins SVM / softmax regression / hierarchical softmax
 
+### 🧮 합성곱 신경망
+
+- **CNN 개념**
+
+  > [CNN의 기본 구조와 연산](https://github.com/erectbranch/Neural_Networks_and_Deep_Learning/tree/master/ch08/summary01): spatial dependence, depth, 3D grid(height, width, depth), filter, convolution
+
 <br/>
 
 ## :mag: 목차
