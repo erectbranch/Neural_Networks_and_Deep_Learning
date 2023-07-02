@@ -160,31 +160,43 @@ $$ y_k \ \sum_{j}{w_{kj}z_j + w_{k0}} $$
 
 그런데 input data에 linear transform을 적용했다면 input은 다음과 같은 형태가 된다.
 
-$$ x_i = \tilde{x}_i = ax_i + b $$
+```math
+x_i = \tilde{x}_i = ax_i + b
+```
 
 그렇다면 corresponding linear transformation을 weight, bias에 적용해야 기존과 같은 학습이 된다. 바뀐 weight와 bias 표현식은 다음과 같다.
 
-$$ w_{ji} \rightarrow \tilde{w}_{ji} = {1 \over a} w_{ji} \quad and \quad w_{j0} = w_{j0} - {b \over a} \sum_{i}{w_{ji}} $$
+```math
+w_{ji} \rightarrow \tilde{w}_{ji} = {1 \over a} w_{ji} \quad and \quad w_{j0} = w_{j0} - {b \over a} \sum_{i}{w_{ji}}
+```
 
 2. output에 linear transform을 적용
 
 만약 output data에 linear transform을 적용했다면 output은 다음과 같은 형태가 된다.
 
-$$ y_k = \tilde{y}_{k} = cy_k + d $$
+```math
+y_k = \tilde{y}_{k} = cy_k + d
+```
 
 이런 linear transformation이 적용된 output을 출력하기 위해, 이전 layer인 second layer의 weight와 bias는 다음과 같다.
 
-$$ w_{kj} \rightarrow \tilde{w}_{kj} cw_{kj} \quad and \quad w_{k0} = cw_{k0} + d $$
+```math
+w_{kj} \rightarrow \tilde{w}_{kj} cw_{kj} \quad and \quad w_{k0} = cw_{k0} + d
+```
 
 이렇게 바뀐 weight에는 기존 weight decay를 적용할 수 없다. 기존 식을 회상해 보자.
 
-$$ E(w) = E_0(w) + {1 \over 2}\lambda\sum_{i}{w_{i}^2} $$
+```math
+E(w) = E_0(w) + {1 \over 2}\lambda\sum_{i}{w_{i}^2}
+```
 
 이 식은 바뀐 weight의 성분들을 반영하지 못한다. 또한 여러 단계에서 scaling을 적용했다면, 바뀐 weight들을 서로 다르게 취급해야 한다.
 
 만약 위 예시에서 input, output 모두 linear transform을 적용했다면 regularization을 다음과 같이 수정하면 사용할 수 있다.
 
-$$ {{\lambda}_1 \over {2}} \sum_{w \in W_1}{w}^2 + {{\lambda}_2 \over {2}} \sum_{w \in W_2}{w}^2 $$
+```math
+{{\lambda}_1 \over {2}} \sum_{w \in W_1}{w}^2 + {{\lambda}_2 \over {2}} \sum_{w \in W_2}{w}^2
+```
 
 - $w_1$ : first layer의 weights
 
@@ -318,19 +330,29 @@ hidden layer가 k인 신경망이 있다. output layer까지 합치면 layer는 
 
 이 다층 신경망에서는 다음과 같은 재귀식이 성립한다. activation function $\Phi(\cdot)$ 는 identity function을 의미한다.
 
-$$ \bar{h}_1 = \Phi (W_{1}^T \bar{x}) = W_{1}^{T}\bar{x} $$
+```math
+\bar{h}_1 = \Phi (W_{1}^T \bar{x}) = W_{1}^{T}\bar{x}
+```
 
-$$ \bar{h}_{p+1} = \Phi (W_{p+1}^{T} \bar{h}_p ) = W_{p+1}^{T} \bar{h}_p \quad \forall p \in \lbrace 1,..., k-1 \rbrace $$
+```math
+\bar{h}_{p+1} = \Phi (W_{p+1}^{T} \bar{h}_p ) = W_{p+1}^{T} \bar{h}_p \quad \forall p \in \lbrace 1,..., k-1 \rbrace
+```
 
-$$ \bar{o} = \Phi (W_{k+1}^{T} \bar{h}_k) = W_{k+1}^{T} \bar{h}_k $$
+```math
+\bar{o} = \Phi (W_{k+1}^{T} \bar{h}_k) = W_{k+1}^{T} \bar{h}_k
+```
 
 재귀식을 풀자.
 
-$$ \bar{o} = W_{k+1}^{T} W_{k}^{T} ... W_{1}^{T} \bar{x} = (W_1 W_2 ... W_{k+1})^{T} \bar{x} $$
+```math
+\bar{o} = W_{k+1}^{T} W_{k}^{T} ... W_{1}^{T} \bar{x} = (W_1 W_2 ... W_{k+1})^{T} \bar{x}
+```
 
 사실상 $(W_1 W_2 ... W_{k+1})^{T}$ 에 대응하는 새로운 ( $d \times m$ ) 행렬 $W_{xo}$ 를 만들어서, 그냥 $W_{xo}$ 의 계수들을 학습시키면 본질적으로 차이가 없는 셈이다.
 
-$$ \bar{o} = W_{xo}^{T} \bar{x} $$
+```math
+\bar{o} = W_{xo}^{T} \bar{x}
+```
 
 심지어 앞서 $(W_1 W_2 ... W_{k+1})$ 로 학습한 것보다 하나의 행렬로 학습한 것이 더 바람직하다. 왜냐하면 여분의 행렬이 많을수록 <U>매개변수만 많아질 뿐 model의 능력이 좋아지지는 않기 때문</U>이다.
 
