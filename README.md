@@ -42,6 +42,12 @@
 
   > [이진/다중 분류 - 신경망과 여러 모델 비교](https://github.com/erectbranch/Neural_Networks_and_Deep_Learning/tree/master/ch02/summary01): 이진 분류 - perceptron(smoothed surrogate) / Widrow-Hoff / logistic regression / SVM, 다중 분류 - multiclass perceptron / Weston-Watkins SVM / softmax regression / hierarchical softmax
 
+### 🔦 심층 신경망의 훈련
+
+- **배치 정규화**
+
+  > [정규화 및 배치 정규화](https://github.com/erectbranch/Neural_Networks_and_Deep_Learning/tree/master/ch03/summary02): shift and scaling(standardization), min-max scaling / internal covariate shift, / epoch, batch, mini-batch, iteration / batch normalization, whitening, in-layer normalization, inference with BN, BN in CNN
+
 ### 🧮 합성곱 신경망
 
 - **CNN 개념**
