@@ -30,7 +30,7 @@ $$ X' = {{X - \mu} \over \sigma} $$
 
     데이터를 **0~1 사이의 값으로 변환**한다.
 
-    > 예를 들어 이미지 데이터가 픽셀 정보를 0~255 사이 값을 갖는다고 하자. 이를 255로 나누면 0.0~1.0 사이 값을 갖게 된다.
+    > 예를 들어 이미지 데이터가 픽셀 정보를 0\~255 사이 값을 갖는다고 하자. 이를 255로 나누면 0.0\~1.0 사이 값을 갖게 된다.
 
 $$ X' = {{X - X_{min}} \over {X_{max} - X_{min}}} $$
 
@@ -164,7 +164,9 @@ $$ y_i \leftarrow {\gamma} \hat{x_i} + \beta $$
 
 ![BN algorithm](images/batch_normalization_algorithm.png)
 
-모델을 mini-batch 단위로 학습하기 때문에, 패러미터도 mini-batch 단위로 모두 가지게 된다. 그리고 추론 단계에서는 이러한 $n$ 개의 mini-batch를 가지고, 사용할 평균, 표준편차를 구하게 된다.
+모델을 mini-batch 단위로 학습하기 때문에, 패러미터도 mini-batch 단위로 모두 가지게 된다. 그리고 추론 단계에서는 $n$ 개의 mini-batch를 가지고, 추론에 사용할 평균, 표준편차를 구하게 된다.
+
+> layer가 normalization된 값을 입출력으로 사용하기 때문에, 추론 시에도 normalization이 적용되어야 제대로 된 추론이 가능하다.
 
 이처럼 추론 단계에서 사용하는 parameter를 **moving average**(이동 평균)을 통해 구한다.
 
@@ -186,9 +188,13 @@ $$ y_i \leftarrow {\gamma} \hat{x_i} + \beta $$
 
 ![moving average](images/moving_average.png)
 
-$$ \hat{\mu} \leftarrow \alpha \hat{\mu} + (1- \alpha) {\hat{\mu}}_{\beta}^{(i)} $$
+```math
+\hat{\mu} \leftarrow \alpha \hat{\mu} + (1- \alpha) {\hat{\mu}}_{\beta}^{(i)}
+```
 
-$$ \hat{\sigma} \leftarrow \alpha \hat{\sigma} + (1- \alpha) {\hat{\sigma}}_{\beta}^{(i)} $$
+```math
+\hat{\sigma} \leftarrow \alpha \hat{\sigma} + (1- \alpha) {\hat{\sigma}}_{\beta}^{(i)}
+```
 
 - $\alpha$ : moving average의 decay factor(momentum). 주로 1에 가까운 0.9, 0.99, 0.999를 사용한다.
 
